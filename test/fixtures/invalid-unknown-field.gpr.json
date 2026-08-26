@@ -1,0 +1,15 @@
+{
+    "@context": "https://authenticmemory.org/schema/v1",
+    "type": "gami-proof",
+    "schema": "v1",
+    "id": "urn:uuid:018f3f7a-6e3b-7c1a-8f2b-123456789abc",
+    "subject": {
+        "file_hash": "SHA256:not-a-valid-hash"
+    },
+    "proof": {
+        "created": "not-a-date",
+        "key_id": "embedded-key",
+        "unexpected": true
+    },
+    "parent": null
+}

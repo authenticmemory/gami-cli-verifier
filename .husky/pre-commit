@@ -1,0 +1,5 @@
+pnpm format:fix
+pnpm lint
+pnpm cpd
+pnpm test
+pnpm build

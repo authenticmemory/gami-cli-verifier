@@ -1,0 +1,19 @@
+{
+    "@context": "https://authenticmemory.org/schema/v1",
+    "type": "gami-proof",
+    "schema": "v1",
+    "id": "urn:uuid:018f3f7a-6e3b-7c1a-8f2b-123456789abc",
+    "subject": {
+        "filename": "example.pdf",
+        "file_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "metadata": {
+            "collection": "phase-1-fixtures"
+        }
+    },
+    "proof": {
+        "created": "2026-08-26T10:00:00Z",
+        "key_id": "did:web:archive.example#key-1",
+        "public_key_hex": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "parent": null
+}
