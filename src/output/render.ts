@@ -19,6 +19,11 @@ export function renderHuman(result: CommandResult): string {
         lines.push(`${marker(check)} ${check.name}: ${check.message}`);
         for (const detail of check.details ?? []) lines.push(`  ${detail.path}: ${detail.message}`);
     }
-    lines.push("", "Structural inspection does not prove cryptographic authenticity.");
+    lines.push(
+        "",
+        result.command === "verify"
+            ? "Local cryptography checked. Institutional DID authorization and Bitcoin anchoring are not yet verified."
+            : "Structural inspection does not prove cryptographic authenticity.",
+    );
     return lines.join("\n");
 }
