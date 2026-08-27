@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "@jest/globals";
-import { validateGpr } from "./gpr";
+import { gprLifecycle, validateGpr } from "./gpr";
 
 function fixture(name: string): unknown {
     return JSON.parse(
@@ -61,5 +61,21 @@ describe("validateGpr", () => {
                 path: "$.proof.merkle_path",
                 message: "must contain at most 128 steps",
             });
+    });
+
+    it("classifies each deployed GPR lifecycle stage", () => {
+        const value = fixture("valid-unsigned.gpr.json") as Record<string, unknown>;
+        const proof = value.proof as Record<string, unknown>;
+        expect(gprLifecycle(value as never)).toBe("unsigned");
+        proof.signature = `ed25519:${"d".repeat(128)}`;
+        expect(gprLifecycle(value as never)).toBe("signed");
+        proof.timestamp = {
+            type: "opentimestamps",
+            document_hash: `sha256:${"e".repeat(64)}`,
+            upgraded: false,
+        };
+        expect(gprLifecycle(value as never)).toBe("stamped");
+        (proof.timestamp as Record<string, unknown>).upgraded = true;
+        expect(gprLifecycle(value as never)).toBe("upgraded");
     });
 });

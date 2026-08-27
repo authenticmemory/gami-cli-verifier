@@ -1,7 +1,7 @@
 import type { ArgumentsCamelCase, Argv } from "yargs";
 import { readJsonFile } from "../adapters/files";
 import { InputError } from "../domain/error";
-import { validateGpr } from "../domain/gpr";
+import { gprLifecycle, validateGpr } from "../domain/gpr";
 import { ExitCode, OUTPUT_VERSION, exitCodeFor, type CommandResult } from "../domain/result";
 import { renderJson } from "../output/json";
 import { renderHuman } from "../output/render";
@@ -33,6 +33,7 @@ export async function handler(argv: ArgumentsCamelCase<InspectArguments>): Promi
                   command: "inspect",
                   status: "passed",
                   gpr_id: validation.value.id,
+                  lifecycle: gprLifecycle(validation.value),
                   checks: [
                       {
                           name: "gpr_format",

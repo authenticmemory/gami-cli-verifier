@@ -22,7 +22,7 @@ During development:
 
 ```sh
 pnpm install
-pnpm start -- inspect test/fixtures/valid-unsigned.gpr.json
+pnpm start inspect test/fixtures/valid-unsigned.gpr.json
 pnpm test
 pnpm compile
 pnpm build
