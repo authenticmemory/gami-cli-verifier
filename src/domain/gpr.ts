@@ -2,6 +2,7 @@ export interface GprMerkleStep {
     hash: string;
     position: "left" | "right";
 }
+
 export interface GprTimestamp {
     type: string;
     document_hash: string;
@@ -12,6 +13,7 @@ export interface GprTimestamp {
     ots_data?: string;
     upgraded: boolean;
 }
+
 export interface GprProof {
     created: string;
     key_id: string;
@@ -24,6 +26,7 @@ export interface GprProof {
     merkle_root?: string;
     merkle_path?: GprMerkleStep[];
 }
+
 export interface Gpr {
     "@context": "https://authenticmemory.org/schema/v1";
     type: "gami-proof";
@@ -33,13 +36,17 @@ export interface Gpr {
     proof: GprProof;
     parent: string | null;
 }
+
 export interface ValidationIssue {
     path: string;
     message: string;
 }
+
 export type GprValidation =
     | { valid: true; value: Gpr; issues: [] }
     | { valid: false; issues: ValidationIssue[] };
+
+export type GprLifecycle = "unsigned" | "signed" | "stamped" | "upgraded";
 
 const HEX_32 = /^[0-9a-f]{64}$/;
 const SHA256 = /^sha256:[0-9a-f]{64}$/;
@@ -51,6 +58,7 @@ const URN_UUID =
 function object(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+
 function exactKeys(
     value: Record<string, unknown>,
     allowed: readonly string[],
@@ -61,6 +69,7 @@ function exactKeys(
         if (!allowed.includes(key))
             issues.push({ path: `${path}.${key}`, message: "unknown field" });
 }
+
 function requiredString(
     value: Record<string, unknown>,
     key: string,
@@ -74,6 +83,7 @@ function requiredString(
     }
     return item;
 }
+
 function optionalString(
     value: Record<string, unknown>,
     key: string,
@@ -88,6 +98,7 @@ function optionalString(
     }
     return item;
 }
+
 function checkPattern(
     value: string | undefined,
     pattern: RegExp,
@@ -97,6 +108,7 @@ function checkPattern(
 ): void {
     if (value !== undefined && !pattern.test(value)) issues.push({ path, message });
 }
+
 function validateMerklePath(value: unknown, path: string, issues: ValidationIssue[]): void {
     if (!Array.isArray(value)) {
         issues.push({ path, message: "must be an array" });
@@ -121,6 +133,7 @@ function validateMerklePath(value: unknown, path: string, issues: ValidationIssu
             issues.push({ path: `${stepPath}.position`, message: 'must be "left" or "right"' });
     });
 }
+
 function validateTimestamp(value: unknown, issues: ValidationIssue[]): void {
     const path = "$.proof.timestamp";
     if (!object(value)) {
@@ -251,11 +264,16 @@ export function validateGpr(value: unknown): GprValidation {
         if (created !== undefined && !Number.isFinite(Date.parse(created)))
             issues.push({ path: "$.proof.created", message: "must be an ISO-8601 timestamp" });
         const keyId = requiredString(proof, "key_id", "$.proof", issues);
-        if (keyId !== undefined && (!keyId.startsWith("did:web:") || !keyId.includes("#")))
-            issues.push({
-                path: "$.proof.key_id",
-                message: "must be a did:web verification-method identifier",
-            });
+        if (keyId !== undefined) {
+            try {
+                parseDidKeyId(keyId);
+            } catch (error) {
+                issues.push({
+                    path: "$.proof.key_id",
+                    message: error instanceof Error ? error.message : "invalid DID key identifier",
+                });
+            }
+        }
         checkPattern(
             optionalString(proof, "public_key_hex", "$.proof", issues),
             HEX_32,
@@ -306,3 +324,11 @@ export function validateGpr(value: unknown): GprValidation {
     if (issues.length > 0) return { valid: false, issues };
     return { valid: true, value: value as unknown as Gpr, issues: [] };
 }
+
+export function gprLifecycle(gpr: Gpr): GprLifecycle {
+    if (gpr.proof.timestamp?.upgraded) return "upgraded";
+    if (gpr.proof.timestamp) return "stamped";
+    if (gpr.proof.signature) return "signed";
+    return "unsigned";
+}
+import { parseDidKeyId } from "./did";

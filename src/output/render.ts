@@ -1,5 +1,7 @@
 import type { CheckResult, CommandResult } from "../domain/result";
+
 import { theme } from "../theme";
+
 function marker(check: CheckResult): string {
     return check.status === "passed"
         ? theme.ok("PASS")
@@ -9,8 +11,10 @@ function marker(check: CheckResult): string {
             ? theme.warn("UNKNOWN")
             : "SKIP";
 }
+
 export function renderHuman(result: CommandResult): string {
     const lines = [theme.heading(`GAMI ${result.command}`)];
+    if (result.lifecycle) lines.push(`Lifecycle: ${result.lifecycle}`);
     for (const check of result.checks) {
         lines.push(`${marker(check)} ${check.name}: ${check.message}`);
         for (const detail of check.details ?? []) lines.push(`  ${detail.path}: ${detail.message}`);

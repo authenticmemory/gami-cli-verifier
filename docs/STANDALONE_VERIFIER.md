@@ -102,6 +102,8 @@ reported in output and must never masquerade as live institutional authorization
 - Document the trust model, output contract, and exit codes.
 - Define the strict supported GPR v1 shape and encoding constraints.
 - Implement `gami inspect` without making cryptographic claims.
+- Parse standards-conforming `did:web` and `did:webvh` signing-key identifiers.
+- Report the deployed record lifecycle: unsigned, signed, stamped, or upgraded.
 - Add valid and adversarial fixtures with meaningful automated tests.
 
 ### Phase 2 — local cryptographic verification

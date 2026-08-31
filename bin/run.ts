@@ -7,7 +7,7 @@ const run = yargs(hideBin(process.argv));
 run.scriptName("gami").usage("$0 <command> [options]");
 
 for (const command of commands) {
-    run.command(command as CommandModule);
+    run.command(command as unknown as CommandModule);
 }
 
 void run
