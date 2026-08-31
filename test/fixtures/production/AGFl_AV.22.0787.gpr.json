@@ -1,0 +1,99 @@
+{
+    "@context": "https://authenticmemory.org/schema/v1",
+    "type": "gami-proof",
+    "schema": "v1",
+    "id": "urn:uuid:a3a4ed5c-fbcd-4338-94eb-ee53e09ffabb",
+    "subject": {
+        "filename": "AGFl_AV.22.0787.mp4",
+        "file_hash": "sha256:1f4d66495ee0f691b7b07c91d1b268844ae80d4e1b5200fcd5182e21b31f7942",
+        "metadata": {
+            "archival_id": "AGFl_0078",
+            "camera": "Günter Wittmann",
+            "collection": "Flossenbürg Media Collection",
+            "dimensions": "640x360",
+            "duration_seconds": "2009",
+            "interviewer": "Michael Aue",
+            "language": "de",
+            "memarc_file_id": "52ea4af0759c02804a8b4568",
+            "memarc_interview_id": "537f04e9759c02b41950f53e",
+            "mime_type": "video/mp4",
+            "recorded": "2009-07-27",
+            "rights": "Nur mit Einverständnis und Nennung von Archiv bzw. Urheber",
+            "source": "KZ-Gedenkstätte Flossenbürg / Medienwerkstatt Franken",
+            "source_url": "https://memorial-archives.international/media_collections/show/537f04e9759c02b41950f53e",
+            "title": "Interview Hana Malka 2009"
+        }
+    },
+    "proof": {
+        "created": "2026-06-19T19:40:28Z",
+        "key_id": "did:web:gedenkstaette-flossenbuerg.de#key-1",
+        "public_key_hex": "25a4c7c5500d69118f6a67a6bec27a8a1759a759f7330dee7cce6c8d27477f6c",
+        "signature": "ed25519:1b55c03d675b51a98e00c708576679f38de004650b196faede51810c4648e6293656e70ffaab5749dd3e8cb631f43a767424fb20d4c329c8ef65f34e04c51b0f",
+        "authenticator_data": "FIIy/XXowhJDS1sxCHP8THmRoDc8ZXCjX2FyIzTtc8YFAAAAHA==",
+        "client_data_json": "eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiaTZUZldFV2FuejJ0SU5Td3p6b1d1X25ZcG83X1BRWXNtYnA0SjBhcUYxOCIsIm9yaWdpbiI6Imh0dHBzOi8vYXBwLmF1dGhlbnRpY21lbW9yeS5vcmciLCJjcm9zc09yaWdpbiI6ZmFsc2V9",
+        "timestamp": {
+            "type": "OpenTimestamps",
+            "document_hash": "sha256:9b1b9efdfed61cab5c15e9714849db9aa128e5277f76f0a9382348ca77569f75",
+            "merkle_root": "4f3f57f55915ed69a41239a3b15dc05243b1395c36baee884bc031dd1402457e",
+            "merkle_path": [
+                {
+                    "hash": "38a49516ef04e793b14e003601db8a741a2506b9f1d043665b1d120edb9b74ce",
+                    "position": "left"
+                },
+                {
+                    "hash": "230a696d852e7431f2b44e0dcf31da36085aaeea0ad944fe6c0e83f7b0ec7674",
+                    "position": "right"
+                },
+                {
+                    "hash": "7d617c5041b8436f0fc0c22879260d78169ee33c25bb2c397ce8b320331a0fbf",
+                    "position": "right"
+                },
+                {
+                    "hash": "14c617828653f7a33489d18eeba47f8e86ee405cbd382e8350a75008c91a11f0",
+                    "position": "left"
+                },
+                {
+                    "hash": "f949f7c2d281612198b8fac5074c2cca4375d74ded95d5eda2dfc5fc76ae2de2",
+                    "position": "right"
+                },
+                {
+                    "hash": "01422773296c7b1c7292c270f37aff78c6d52af478072dc331b8305a0cc0ff00",
+                    "position": "left"
+                }
+            ],
+            "calendar": "https://alice.btc.calendar.opentimestamps.org",
+            "submitted_at": "2026-06-23T09:02:17Z",
+            "ots_data": "8AgCiiZv8pP+3wjwINnbg2t+ZSFDESVv3enBS7W7EMi/7oYNBFHzeSM/3rFYCPAQpmlvsTV6GxpTZSruDE3N4wjxIJFtu5t6JFgWDS/TpLxXxiariatjaRjHNgap0fQk8Uw8CPEgOpI+bIwGSYk0+zCKpIUaLOrrKmGJP35YJ2sQwmdNB7EI8QRqOkuZ8Ai1SVL+NzD/dP8Ag9/jDS75DI4uLWh0dHBzOi8vYWxpY2UuYnRjLmNhbGVuZGFyLm9wZW50aW1lc3RhbXBzLm9yZwjwIArUi+Lr7tWlzG43Sdr2H0lgGb0/psV+idkFOhnpkj4ACPAgeBtmNNlsAYz2mQYWpR7cXGu9ZpKucDsSrGDgcw1seMkI8SDsZr/lLaFbb2FW4dmy7792jwfoyLjDzVZZHXUi0k0odgjwIOzO3edApIJKNvcq3TF9CQF5O0UQC6zBgkOJ4LXuSTFpCPEgm4N+i1V+AItCodMCiC2rmZgYk4zeh+HjFzbM7SLqfDgI8SCGeEtWkwuwQIqPejbE9M7FFeGy3Zjq6DZuEVUx1isKhQjwIDwTx3kJWeGeh/D30ebxMrfGRNFbRM+qEHL4cpZ4OHRVCPEgH0VyLv/4rkbIoN1xoI7KZA4VJqJVKIkkw9o81CEObWQI8CAKYHEHQXaLW/M9tmxm1OlPz2aledryk8gaMnFCPmsaIAjwIAgJVCUDAOFfmm+jDqfYURHrkIXa3jpSgnKExxfttFGJCPEgYGbkjQ34Sh7l69VyB6phK9o6JL3Vzqh4NJS/iml+rUUI8VkBAAAAAQVdbi821NPxx+i3LTFt4TJfOqXbQsX5xqePkmiPm6glAAAAAAD+////AhvzAAAAAAAAFgAUxChHeB3mXKy91KSWgDc7MexxM2gAAAAAAAAAACJqIPAEZ5IOAAgI8SABRsj9YdwzKz+H8LSDhlggvnHtmOW+OI+5evQtt0TJawgI8CCmR9tfQvqZF2kOVgq+z/TYScI85wXzH7Ue9PausokILQgI8SBlVJRLXAWuUQYgxYFR9pN0r8hA1ybToYYEIWF5T/U9mwgI8CBKdnAk/XyWKHgNt0XpVSZ53N5dLr7gFlQH3etSF5vAjQgI8CC+Yd8R0l3Gr8i1iHjAH1nMzhbE8fQyyNA6gwGxoDPfEQgI8SBEe2rLuOBb2LkSoNc9IZhfxhcCH0hd7GaGqEsiCItPrggI8SDJ2pV3sXpeUC5m6rPS/Ns7xs8/rT6KRq77Rpop0dIzxwgI8SCe7zrrcc++3KacYrRSMFMzY2n6HrziadbEeX0HPTk3PggI8CBKSUlqbGyhT4WEBdh+vmarp2+loukTUociWEQ0Il0hyQgI8SATmk2Avn7Q8lFOFjoB5YWvkQ3JzUJY946ijx3SONyG7QgI8SDTr5ZQsN3SSdMu3p3Q6aUBOxJPbcHGi6zhpgTdKKKmvggI8CCw6lJMPKV69PkkWOP3oePmkO/XzSunY5LugdfmM6no/QgI8CBevqdqmlXwTb/5Sxas5edmJoQnjAANtV77Y0bEynGGiggIAAWIlg1z1xkBA+ikOg==",
+            "upgraded": true
+        },
+        "batch_id": "urn:uuid:1aa3cb76-6587-499f-9a54-5f5b7063d53a",
+        "merkle_root": "8ba4df58459a9f3dad20d4b0cf3a16bbf9d8a68eff3d062c99ba782746aa175f",
+        "merkle_path": [
+            {
+                "hash": "9e5498b1fd6472c400846368bee83530750d8162fb00c524606fc246e6519b8c",
+                "position": "left"
+            },
+            {
+                "hash": "978f24cbf0aa365994c855936077d354b11fa41d2c2956e053db240e11c6fffd",
+                "position": "right"
+            },
+            {
+                "hash": "64e522cc42ff5cf61ee5df79d58a3faf7a25cb65a81e3ced017f623e6677fae2",
+                "position": "right"
+            },
+            {
+                "hash": "eb1268e2925b59e880aac01be4bcbc0ae20afafff8e9a2f45b893862b75162de",
+                "position": "left"
+            },
+            {
+                "hash": "07171ce891768510d58a72d771b7d7dfabebbe4c855eb29daa4a92aa7132e8b3",
+                "position": "right"
+            },
+            {
+                "hash": "063553df455df8d168f53d4615abf3defd90c610a1a2c6467a5411482d3ad2fa",
+                "position": "left"
+            }
+        ]
+    },
+    "parent": null
+}

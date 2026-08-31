@@ -108,11 +108,15 @@ reported in output and must never masquerade as live institutional authorization
 
 ### Phase 2 — local cryptographic verification
 
-- Stream SHA-256 hashing so multi-gigabyte archival files remain practical.
-- Reproduce frozen JCS canonical bytes and omission rules independently.
-- Verify raw Ed25519 and WebAuthn assertion signatures.
-- Recompute batch Merkle roots and validate inclusion paths.
-- Add golden vectors generated from production-compatible records.
+- Implemented: stream SHA-256 hashing so multi-gigabyte archival files remain practical.
+- Implemented: reproduce frozen JCS canonical bytes and omission rules independently.
+- Implemented: verify raw Ed25519 and WebAuthn assertion signatures.
+- Implemented: recompute batch Merkle roots and validate inclusion paths.
+- Implemented: lock a real deployed batch-WebAuthn record as a golden vector.
+
+Until identity and Bitcoin phases are complete, successful local cryptography
+returns `indeterminate` with exit code `2`; it never claims complete GAMI proof
+validity.
 
 ### Phase 3 — identity verification
 

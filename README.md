@@ -4,10 +4,10 @@
 It is distributed through npm, requires Node.js 20 or newer, and does not need
 the GAMI web application, database, or API to inspect local records.
 
-Phase 1 establishes the verifier's public contracts. It validates the structure
-of a local GPR, produces stable human and JSON output, and uses documented exit
-codes. It **does not yet claim cryptographic verification**. Hash, signature,
-DID authorization, and Bitcoin verification are subsequent phases.
+Phase 2 validates the structure of a local GPR, streams the document through
+SHA-256, and independently verifies deployed raw-Ed25519 and WebAuthn/Merkle
+signatures. DID authorization and Bitcoin verification are not implemented yet,
+so locally successful verification is deliberately reported as indeterminate.
 
 ## Install and run
 
@@ -16,6 +16,8 @@ npm install --global @authenticmemory/gami
 gami --help
 gami inspect ./record.gpr.json
 gami inspect ./record.gpr.json --json
+gami verify ./document.pdf ./record.gpr.json
+gami verify ./document.pdf ./record.gpr.json --json
 ```
 
 During development:
@@ -41,6 +43,22 @@ Options:
 
 - `--json`: emit the versioned machine-readable result.
 
+### `gami verify <document> <gpr>`
+
+Streams and hashes the local document, compares it with `subject.file_hash`,
+reconstructs the deployed v1 signing payload and any batch Merkle path, and
+verifies the raw Ed25519 or WebAuthn Ed25519 signature.
+
+Options:
+
+- `--public-key <hex>`: override the embedded 32-byte Ed25519 key; the result
+  reports the key source as `overridden`.
+- `--json`: emit the versioned machine-readable result.
+
+A successful Phase 2 run exits `2`, not `0`, because institutional DID
+authorization and Bitcoin anchoring remain unverified. A local mismatch or bad
+signature exits `1`.
+
 ## Exit codes
 
 | Code | Meaning                                                                  |
@@ -56,9 +74,9 @@ are documented in [docs/STANDALONE_VERIFIER.md](docs/STANDALONE_VERIFIER.md).
 
 ## Security
 
-Do not use Phase 1 structural validation as proof that a document is authentic.
-Until the later verification phases ship, use the GAMI web verifier for the
-implemented cryptographic checks and account for its documented trust limits.
+Phase 2 proves local document integrity and signature mathematics. It does not
+yet prove that the signing key was authorized by the named institution or that
+the timestamp is anchored in Bitcoin.
 
 ## License
 

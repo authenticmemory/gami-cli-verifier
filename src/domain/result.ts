@@ -18,6 +18,16 @@ export interface CommandResult {
     checks: CheckResult[];
     gpr_id?: string;
     lifecycle?: "unsigned" | "signed" | "stamped" | "upgraded";
+    evidence?: {
+        document_hash?: string;
+        recorded_hash?: string;
+        signature_mode?: "raw-ed25519" | "webauthn-ed25519";
+        key_source?: "embedded" | "overridden";
+        signing_leaf?: string;
+        signing_merkle_root?: string;
+        webauthn_user_present?: boolean;
+        webauthn_user_verified?: boolean;
+    };
 }
 
 export const ExitCode = { Success: 0, Failed: 1, Indeterminate: 2, Usage: 3, Internal: 4 } as const;
