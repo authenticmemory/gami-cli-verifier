@@ -18,8 +18,8 @@ importers:
         specifier: 17.4.2
         version: 17.4.2
       json-canonicalize:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 3.0.0
+        version: 3.0.0
       picocolors:
         specifier: 1.1.1
         version: 1.1.1
@@ -2430,8 +2430,9 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  json-canonicalize@2.0.0:
-    resolution: {integrity: sha512-yyrnK/mEm6Na3ChbJUWueXdapueW0p380RUyTW87XGb1ww8l8hU0pRrGC3vSWHe9CxrbPHX2fGUOZpNiHR0IIg==}
+  json-canonicalize@3.0.0:
+    resolution: {integrity: sha512-PW21BtLiKRV7gJcT8jf2X4UNN2AF4c1TYEVug1wAWRQSGBJj7fL+v4NgOkIo54SCBPFDyqzMcOJNhjwywCIBuw==}
+    engines: {node: '>=8.5'}
 
   json-parse-better-errors@1.0.2:
     resolution: {integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==}
@@ -6084,7 +6085,7 @@ snapshots:
 
   jsesc@3.1.0: {}
 
-  json-canonicalize@2.0.0: {}
+  json-canonicalize@3.0.0: {}
 
   json-parse-better-errors@1.0.2: {}
 
