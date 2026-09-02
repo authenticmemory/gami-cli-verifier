@@ -1,5 +1,5 @@
 import type { ArgumentsCamelCase, Argv } from "yargs";
-import { hashDocument, readJsonFile } from "../adapters/files";
+import { hashDocument, MAX_BITCOIN_EVIDENCE_BYTES, readJsonFile } from "../adapters/files";
 import { InputError } from "../domain/error";
 import { gprLifecycle, validateGpr } from "../domain/gpr";
 import { ExitCode, OUTPUT_VERSION, exitCodeFor, type CommandResult } from "../domain/result";
@@ -12,6 +12,8 @@ interface VerifyArguments {
     gpr: string;
     json: boolean;
     publicKey?: string;
+    didEvidence?: string;
+    bitcoinEvidence?: string;
 }
 
 export const command = "verify <document> <gpr>";
@@ -32,6 +34,14 @@ export function builder(yargs: Argv): Argv<VerifyArguments> {
         .option("public-key", {
             type: "string",
             describe: "Explicit 32-byte Ed25519 public key in hexadecimal (reported as overridden)",
+        })
+        .option("did-evidence", {
+            type: "string",
+            describe: "Path to an offline did:web DID document",
+        })
+        .option("bitcoin-evidence", {
+            type: "string",
+            describe: "Path to an offline Bitcoin header-chain evidence bundle",
         })
         .option("json", {
             type: "boolean",
@@ -65,9 +75,21 @@ export async function handler(argv: ArgumentsCamelCase<VerifyArguments>): Promis
             return;
         }
 
+        const didDocument = argv.didEvidence
+            ? await readJsonFile(argv.didEvidence, "DID evidence")
+            : undefined;
+        const bitcoinEvidence = argv.bitcoinEvidence
+            ? await readJsonFile(
+                  argv.bitcoinEvidence,
+                  "Bitcoin evidence",
+                  MAX_BITCOIN_EVIDENCE_BYTES,
+              )
+            : undefined;
         const documentHash = await hashDocument(argv.document);
         const result = await verifyLocal(documentHash, validation.value, {
             publicKeyHex: argv.publicKey?.toLowerCase(),
+            didDocument,
+            bitcoinEvidence,
         });
         result.lifecycle = gprLifecycle(validation.value);
         console.log(argv.json ? renderJson(result) : renderHuman(result));

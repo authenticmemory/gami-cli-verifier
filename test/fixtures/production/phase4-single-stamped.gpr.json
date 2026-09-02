@@ -1,0 +1,33 @@
+{
+    "@context": "https://authenticmemory.org/schema/v1",
+    "type": "gami-proof",
+    "schema": "v1",
+    "id": "urn:uuid:5c71be90-361d-4a3c-81b1-7a12c980b3ea",
+    "subject": {
+        "file_hash": "sha256:827fffac6cf0e427db4a4ad8aa8e56e6a6143007ddc2cf05b51144cc6318a2a1",
+        "filename": "gami-phase4-single-test.txt",
+        "metadata": {
+            "language": "en"
+        }
+    },
+    "proof": {
+        "created": "2026-09-01T07:27:13Z",
+        "key_id": "did:web:acre-ultimatum-repaying.ngrok-free.dev#key-1",
+        "public_key_hex": "0f7c76f44f947b82547c67bfd66c7f4b8c4f2a8a7a2aa76765913dd700d913a3",
+        "signature": "ed25519:6e20e0f3b4de995d2e6afe1b43590e0d4ee635f13e9f28a1c57c79a5697a64f745c315b1288728f52602732a27d6db704f06990398eff9a42d4c4ff41d95170e",
+        "authenticator_data": "Qyi35N/EIhnmORmVV/GP7WfPABIvg4npJn2weB8x2SAFAAAABg==",
+        "client_data_json": "eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiZ0FEczNWOVY4b1hiTXE4UFdIazNTMk84RWZMeW1XMHFDcDVVeUpKV0QzNCIsIm9yaWdpbiI6Imh0dHBzOi8vc3RhZ2luZy5hdXRoZW50aWNtZW1vcnkub3JnIiwiY3Jvc3NPcmlnaW4iOmZhbHNlfQ==",
+        "batch_id": "urn:uuid:4316c5e9-7f69-4f94-b39e-588b6e78243e",
+        "merkle_root": "8000ecdd5f55f285db32af0f5879374b63bc11f2f2996d2a0a9e54c892560f7e",
+        "merkle_path": [],
+        "timestamp": {
+            "type": "OpenTimestamps",
+            "document_hash": "sha256:6badeb6304f94e276d2e75f1cb313fa499db044032f862c27b3286514d1ce37c",
+            "submitted_at": "2026-09-01T07:27:40Z",
+            "upgraded": false,
+            "calendar": "https://bob.btc.calendar.opentimestamps.org",
+            "ots_data": "8BAvZHlIlnDc2bw1xB5OX1mDCP/wCEx/2p/r/7PKCPAQmSVtLOuf6EiuAcOQL0rdvAjwIE5feyBt5t1uyOZV3GY1LeM7j48wxwg++pyUt9+5RVcdCPEEapZ+bfAI0zb4YB46UusAg9/jDS75DI4sK2h0dHBzOi8vYm9iLmJ0Yy5jYWxlbmRhci5vcGVudGltZXN0YW1wcy5vcmf/8AjefALO8lqQvgjxII9Wy6ITw6p9hJ6aOqoA0iimvNxpWZZMUzIU4AzaaPzyCPAQDQ4LBKHHfQNf7ctWfNTojwjxIFfskbvo0fQyNrjbeiDePdkbof3iO2wZcOhcs3kXY96pCPAgn+QVvY9Rtm5NuGQekKEibIrtnkH78o8VfSTNnxTbqXUI8QRqln5t8Aga4GDW8Ce6gwCD3+MNLvkMji4taHR0cHM6Ly9hbGljZS5idGMuY2FsZW5kYXIub3BlbnRpbWVzdGFtcHMub3Jn//AQm24GGzqzH5yxuGXJ0pGkKAjxILBaHNh+0F6Czpo0CttMYBv1MuP2zQ8NQCilJHOTDPjfCPEglYuWj/RptU9Oi8Ok0JZSjPkn/R0WucE0YZZ4NQCPYz4I8CC/QiXqzUeT5RP0nWuSS57B+uglqfQYP0Q0XOcDNBPv/AjxBGqWfm3wCEMEDgfdeZWpAIPf4w0u+QyOKShodHRwczovL2Zpbm5leS5jYWxlbmRhci5ldGVybml0eXdhbGwuY29t8BDhwdz1ICvWwTTjAZmtIOZYCPAg+0jyntEQFBuVIT9GdyKy4kHNs5XHxcPucRdrCL1z/2II8CDbcCHUG0mI/pDOO9ePiBRzqyheWoiHfFiV8rtrUYFEuQjxIHv5Uw4Oy6Sh2xPseCOHe2109BNAbzfX+AkE3hlTD1LcCPAgk2Vajo2IKwzfPj3ogVkZOADwQ319700dz3bL9+bsBa4I8QRqln5u8AgLk9X31p5RHQCD3+MNLvkMjiMiaHR0cHM6Ly9idGMuY2FsZW5kYXIuY2F0YWxsYXh5LmNvbQ=="
+        }
+    },
+    "parent": null
+}

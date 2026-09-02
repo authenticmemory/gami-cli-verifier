@@ -22,11 +22,22 @@ export interface CommandResult {
         document_hash?: string;
         recorded_hash?: string;
         signature_mode?: "raw-ed25519" | "webauthn-ed25519";
-        key_source?: "embedded" | "overridden";
+        key_source?: "embedded" | "overridden" | "did-evidence";
         signing_leaf?: string;
         signing_merkle_root?: string;
         webauthn_user_present?: boolean;
         webauthn_user_verified?: boolean;
+        did?: string;
+        did_key_id?: string;
+        did_evidence_source?: "none" | "provided-current";
+        did_authorization?: "passed" | "failed" | "indeterminate";
+        timestamp_document_hash?: string;
+        timestamp_ots_leaf?: string;
+        timestamp_state?: "missing" | "pending" | "attested" | "verified" | "failed";
+        bitcoin_height?: number;
+        bitcoin_block_hash?: string;
+        bitcoin_block_time?: number;
+        bitcoin_checkpoint_height?: number;
     };
 }
 

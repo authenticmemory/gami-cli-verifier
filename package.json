@@ -9,11 +9,13 @@
         "provenance",
         "verification"
     ],
+    "homepage": "https://github.com/authenticmemory/gami-cli-verifier#readme",
+    "bugs": "https://github.com/authenticmemory/gami-cli-verifier/issues",
     "license": "MIT",
     "author": "Chijioke Ugwuanyi <cugwuanyi@authenticmemory.org>",
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@github.com/progressiv0/gami.git"
+        "url": "git+https://github.com/authenticmemory/gami-cli-verifier.git"
     },
     "bin": {
         "gami": "./bin/run"
@@ -24,8 +26,12 @@
     },
     "files": [
         "dist",
-        "bin"
+        "bin/run"
     ],
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
     "scripts": {
         "build": "tsup-node",
         "build:watch": "tsup-node --watch",
@@ -38,19 +44,22 @@
         "format:fix": "oxfmt .",
         "lint": "oxlint .",
         "lint:fix": "oxfmt . && oxlint .",
+        "package:check": "pnpm build && node scripts/verify-package.mjs",
+        "release:artifacts": "node scripts/create-release-artifacts.mjs",
         "start": "ts-node ./bin/run.ts",
         "start:node": "node ./bin/run",
         "test": "jest",
         "test:watch": "jest --watchAll",
-        "prepare": "husky",
+        "prepare:git-hooks": "husky",
         "release": "semantic-release"
     },
     "dependencies": {
-        "consola": "^3.4.2",
-        "dotenv": "^17.4.2",
+        "@otskit/core": "0.2.0",
+        "consola": "3.4.2",
+        "dotenv": "17.4.2",
         "json-canonicalize": "2.0.0",
-        "picocolors": "^1.1.1",
-        "yargs": "^18.1.0"
+        "picocolors": "1.1.1",
+        "yargs": "18.1.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^21.2.2",
@@ -80,5 +89,9 @@
         "commitizen": {
             "path": "cz-conventional-changelog"
         }
-    }
+    },
+    "engines": {
+        "node": ">=20"
+    },
+    "packageManager": "pnpm@10.13.1"
 }

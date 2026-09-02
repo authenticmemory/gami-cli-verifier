@@ -1,0 +1,31 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id": "did:web:gedenkstaette-flossenbuerg.de",
+    "verificationMethod": [
+        {
+            "id": "did:web:gedenkstaette-flossenbuerg.de#key-1",
+            "type": "Ed25519VerificationKey2020",
+            "controller": "did:web:gedenkstaette-flossenbuerg.de",
+            "publicKeyMultibase": "z6MkgzCrzyQtkUySssqYU5C9eKVUHCtQaeGwktoiXLVdNnwM",
+            "publicKeyHex": "25a4c7c5500d69118f6a67a6bec27a8a1759a759f7330dee7cce6c8d27477f6c"
+        },
+        {
+            "id": "did:web:gedenkstaette-flossenbuerg.de#key-2",
+            "type": "Ed25519VerificationKey2020",
+            "controller": "did:web:gedenkstaette-flossenbuerg.de",
+            "publicKeyMultibase": "z6MkgmaFvsAp7PyaeB5P6PUtP5F3omu66fJSrSC1jzcjP3bW",
+            "publicKeyHex": "22686beee5c8fa8f4daa813ca843b96b412936b7f2d1f6aaaa57d299dcdef249"
+        }
+    ],
+    "authentication": [
+        "did:web:gedenkstaette-flossenbuerg.de#key-1",
+        "did:web:gedenkstaette-flossenbuerg.de#key-2"
+    ],
+    "assertionMethod": [
+        "did:web:gedenkstaette-flossenbuerg.de#key-1",
+        "did:web:gedenkstaette-flossenbuerg.de#key-2"
+    ]
+}

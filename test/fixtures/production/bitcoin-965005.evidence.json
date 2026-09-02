@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "network": "bitcoin-mainnet",
+    "checkpoint": {
+        "height": 965005,
+        "hash": "0000000000000000000176c1e042b4f8712d984f559e4db6ddb9b46a538611a0"
+    },
+    "headers": [
+        {
+            "height": 965005,
+            "header": "0000042095aeba651e04d5b857e191e3dc256ea5fd3c74d3600a02000000000000000000a20fb7654bcb4822dcbb2cdae44e85b6533584b26b41b5f0a2b26984beb08c365383966ac13c0217870c1e50"
+        }
+    ]
+}
