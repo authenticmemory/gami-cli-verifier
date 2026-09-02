@@ -49,7 +49,7 @@ jobs:
               if: github.event_name == 'push'
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: npm publish release/*.tgz --access public --provenance
+              run: npm publish ./release/*.tgz --access public --provenance
             - name: Create GitHub release
               if: github.event_name == 'push'
               env:
