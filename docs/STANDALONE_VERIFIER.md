@@ -114,31 +114,47 @@ reported in output and must never masquerade as live institutional authorization
 - Implemented: recompute batch Merkle roots and validate inclusion paths.
 - Implemented: lock a real deployed batch-WebAuthn record as a golden vector.
 
-Until identity and Bitcoin phases are complete, successful local cryptography
-returns `indeterminate` with exit code `2`; it never claims complete GAMI proof
-validity.
+Missing identity or Bitcoin evidence returns `indeterminate` with exit code `2`;
+the CLI never upgrades a partial result into complete GAMI proof validity.
 
 ### Phase 3 — identity verification
 
-- Resolve `did:web` safely with strict URL, redirect, size, and timeout policy.
-- Validate `verificationMethod` and `assertionMethod` authorization.
-- Support caller-supplied DID documents and clearly labeled embedded-key fallback.
-- Model historical key authorization instead of treating the current DID document
-  as proof of past authorization.
+- Implemented in Phase 3A: accept a caller-supplied current `did:web` document
+  without using a network, registry, database, or GAMI service.
+- Implemented in Phase 3A: require the exact GPR key under `assertionMethod`,
+  validate its controller, decode Ed25519 Multikey or JWK material, and bind it
+  to the key that verifies the GPR signature.
+- Implemented: lock the Flossenbürg `did:web` document and its deployed GPR as a
+  production conformance pair. The fixture was supplied directly before the DID
+  document was deployed at its HTTPS location.
+- Pending Phase 3B: validate native `did:webvh` history and historical key
+  authorization using a real deployment log.
 
 ### Phase 4 — independent Bitcoin verification
 
-- Parse GAMI's raw OpenTimestamps tree format.
-- Recompute timestamp Merkle commitments.
-- Validate attestations against independently obtained Bitcoin block evidence.
-- Support offline evidence bundles and explicit Bitcoin backends.
+- Implemented: reconstruct and hash the canonical timestamp payload while keeping
+  the signing and timestamp Merkle trees separate.
+- Implemented: recompute single and batch timestamp commitments and parse GAMI's
+  base64 raw OpenTimestamps tree using exact-pinned `@otskit/core` `0.2.0`.
+- Implemented: distinguish pending calendar proofs, embedded Bitcoin attestations,
+  malformed proofs, and independently verified anchors.
+- Implemented: validate raw Bitcoin headers, proof of work, header linkage, and
+  connection to package-pinned Bitcoin mainnet checkpoints using offline bundles.
+- Implemented: lock real pending/upgraded single-record and two-member batch
+  vectors as conformance tests.
+- Future backend: optionally query a caller-operated local Bitcoin Core node.
 
 ### Phase 5 — distribution hardening
 
-- Pin and audit security-critical dependencies.
-- Test supported Node.js and operating-system combinations.
-- Publish npm provenance, checksums, an SBOM, and signed release artifacts.
-- Document reproducible verification of the distributed package.
+- Implemented: exact-pin every runtime dependency and install the lockfile frozen.
+- Implemented: test Node.js 20, 22, and 24 across Linux, macOS, and Windows.
+- Implemented: inspect the npm allowlist and execute the installed tarball in CI.
+- Implemented: publish npm provenance, SHA-256 checksums, a CycloneDX SBOM, and
+  GitHub-signed build attestations from immutable, SHA-pinned workflow actions.
+- Implemented: disclose the verifier version and package-pinned Bitcoin
+  checkpoints through `gami version` and every JSON verification result.
+- Documented: checkpoint admission, release operation, and independent artifact
+  verification in `docs/RELEASING.md`.
 
 ## Output contract
 
@@ -155,7 +171,14 @@ Machine output is versioned independently of the package:
             "status": "passed",
             "message": "GPR v1 structure and encodings are valid"
         }
-    ]
+    ],
+    "verifier": {
+        "name": "@authenticmemory/gami",
+        "version": "0.1.0",
+        "node": "v20.x.x",
+        "bitcoin_network": "bitcoin-mainnet",
+        "bitcoin_checkpoints": []
+    }
 }
 ```
 

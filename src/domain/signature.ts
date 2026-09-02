@@ -5,7 +5,7 @@ import { bytesToHex, equalBytes, hexToBytes, sha256Bytes } from "./hash";
 import { foldMerklePath } from "./merkle";
 
 export type SignatureMode = "raw-ed25519" | "webauthn-ed25519";
-export type KeySource = "embedded" | "overridden";
+export type KeySource = "embedded" | "overridden" | "did-evidence";
 
 export interface SignatureVerification {
     valid: boolean;
@@ -62,6 +62,7 @@ function signedBytes(authenticatorData: Uint8Array, clientDataJson: Uint8Array):
 export async function verifySignature(
     gpr: Gpr,
     publicKeyOverride?: string,
+    overrideSource: Exclude<KeySource, "embedded"> = "overridden",
 ): Promise<SignatureVerification> {
     const canonical = canonicalForSigning(gpr);
     const leaf = sha256Bytes(new TextEncoder().encode(canonical));
@@ -70,7 +71,7 @@ export async function verifySignature(
         canonical,
         leafHex: bytesToHex(leaf),
         merkleRootHex: bytesToHex(root),
-        keySource: publicKeyOverride ? ("overridden" as const) : ("embedded" as const),
+        keySource: publicKeyOverride ? overrideSource : ("embedded" as const),
     };
 
     const signatureHex = gpr.proof.signature?.replace(/^ed25519:/, "");

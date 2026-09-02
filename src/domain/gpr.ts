@@ -155,7 +155,9 @@ function validateTimestamp(value: unknown, issues: ValidationIssue[]): void {
         path,
         issues,
     );
-    requiredString(value, "type", path, issues);
+    const type = requiredString(value, "type", path, issues);
+    if (type !== undefined && type !== "OpenTimestamps")
+        issues.push({ path: `${path}.type`, message: 'must be "OpenTimestamps"' });
     checkPattern(
         requiredString(value, "document_hash", path, issues),
         SHA256,

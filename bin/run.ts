@@ -1,10 +1,11 @@
 import yargs, { CommandModule } from "yargs";
 import { hideBin } from "yargs/helpers";
 import { commands } from "../src";
+import packageJson from "../package.json";
 
 const run = yargs(hideBin(process.argv));
 
-run.scriptName("gami").usage("$0 <command> [options]");
+run.scriptName("gami").usage("$0 <command> [options]").version(packageJson.version);
 
 for (const command of commands) {
     run.command(command as unknown as CommandModule);

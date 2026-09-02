@@ -1,0 +1,77 @@
+{
+    "@context": "https://authenticmemory.org/schema/v1",
+    "type": "gami-proof",
+    "schema": "v1",
+    "id": "urn:uuid:19b5d4da-5d23-4b18-ae81-37747a0fc49c",
+    "subject": {
+        "filename": "GAMI_profil_10.rd3",
+        "file_hash": "sha256:715046a63673a57640312ef0e8e1d5120d5928858474ab2148f7ce0765b03d71",
+        "metadata": {
+            "language": "en"
+        }
+    },
+    "proof": {
+        "created": "2026-07-07T13:01:31Z",
+        "key_id": "did:web:zweiter-gang.de#key-1",
+        "public_key_hex": "47eb56a96ecc0e53432fea79bdd817c7b150ea018c083e10a9bbc3421a0a0390",
+        "signature": "ed25519:d1de8867e872a14a043ac3b3d23b4f218f702c6f0fe85993f90ba010b24b1743ad8996a443a719d63dbd3dc697af19a16c8540a1855b2caf51ecbc351a189408",
+        "authenticator_data": "FIIy/XXowhJDS1sxCHP8THmRoDc8ZXCjX2FyIzTtc8YFAAAASg==",
+        "client_data_json": "eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiTFZ1SFlsblhzaDJWdzdkVFZOTmZZdkhybk9ZTEY2Sm95TkZ6SkJmQldJSSIsIm9yaWdpbiI6Imh0dHBzOi8vYXBwLmF1dGhlbnRpY21lbW9yeS5vcmciLCJjcm9zc09yaWdpbiI6ZmFsc2V9",
+        "timestamp": {
+            "type": "OpenTimestamps",
+            "document_hash": "sha256:f9ae06e5d985cf59827db90d685804c5fa56f720b4ad50f0c9a8e88f288088ec",
+            "merkle_root": "f5fe46e244ff5089edcef529f9f17cad2f33daac5960c0a1e50e16c1aacafc03",
+            "merkle_path": [
+                {
+                    "hash": "71ff3683a7123878414c3ba9d6a1d0ae6cfca25a93a3bb82af79d610c93614bb",
+                    "position": "right"
+                },
+                {
+                    "hash": "f283895518b7656e5618c0046ffc40ed5531adc3a39bd882a2fa558fa22d0731",
+                    "position": "left"
+                },
+                {
+                    "hash": "6807a615dc8da7e85edc5679ddbf08c1e4fac11c6a27d25aaaca2c17185c3255",
+                    "position": "right"
+                },
+                {
+                    "hash": "427df0b780939ad2d5bad89458fcc0b258b42cb5910b30e409faf6846fb7d906",
+                    "position": "right"
+                },
+                {
+                    "hash": "e2ee81b5be19fe66f94b67f0201081190700e22879f0f4018465a9f15e4660e9",
+                    "position": "right"
+                }
+            ],
+            "calendar": "https://alice.btc.calendar.opentimestamps.org",
+            "submitted_at": "2026-07-07T13:11:22Z",
+            "ots_data": "8AgXWbmV0/7bpAjwEFdSCuSWlC12fViFDLKGYO8I8CBXVnRGy8N2Lhv/0p03X0MOwBbviPEwblr54/hgTEpBVQjxINAfmaGpdAo4pV85VQu0lSXc1kvYEWrw+FzGHtYmgfTaCPEEakz6+vAIHWw0ix63zx//AIPf4w0u+QyOLi1odHRwczovL2FsaWNlLmJ0Yy5jYWxlbmRhci5vcGVudGltZXN0YW1wcy5vcmcI8CA7il9CTNF9NWuLY0RTGE0wSIJ5bqMdC3CHMghyxHlvXAjwICi2033HrRNaX3lw5bDby7qGc8Sae0dyiAzXl/8gnPk7CPEgtII/uhbtHF1HCtmpNjg/R6jnfFSmbrr85jiI7UgXtgEI8CCX9MJmQCqPUhLHqnADmL334L6DCJWI0MErjV/XXDw+cQjxIHn+VSNEBursifb8AjTZ/Ulwy0PqSaaTO+iQtpFh9T6KCPAgMznhhGvrNQeHijulvOvjdZn+yTNuIT9tUD4hZnvKjFAI8CCQW9BBYLpI3q0gQqXCkzH73IqNyE5AlttGoKVOzwYaTQjwIIawUvyumWd9k1B4/cbVA+zmaQ9Ve0zL/ufUVfy9+16XCPAgwmoP6XnRdwDQfuTA2KlBUYV+dOn8//CrU6BKw3QvOPMI8CD1tLfPvd8duufpNCUHYLC+vVrz2yNUDgSDtdm8xD/pggjxIHjpugYFKvs9cbj57i3/DY2edLilEJ6eqNPcpYlyW309CPFZAQAAAAGjkxN4U4YsgOtu62mRaWEQjh+CMF7EMdf8jQixIYtrUQAAAAAA/v///wKBlwAAAAAAABYAFBbK+wvyYd0McAl0oIlLnfgOYgFjAAAAAAAAAAAiaiDwBHGaDgAICPAgjpTFhOWpiFA6gCEdUah7w22Pcg1uTnUZwFk5ksAmNFgICPEgANKj/4svwbaIKWuRExvkWURmvIIi+11ln46JBmS8t7cICPEgd0zJ+eihHd/9blyWPQtsK4heiOgUEudp2YiLWilGdG0ICPAgkoJPhSTuncskDaIb7tzA3blQXobBp2KILzSty/YZw0EICPEgrDLs8YNgtaG0UM9J1uyZCknYrokJbbbvxjb3R+Q31wMICPEgPHag4wxgJU9gX/EWk4LCDzwQDAequIqw0t+9g6jdxnUICPAgMpgm1mnMBBscdNdZPEJCNEiC8edBya14QVGHFpqPOKsICPAgTJ6LaRBiJoFvu41wM+d3Cjb+gXzpbdbx1j4P/F1WdLEICPEgcUzeQiSKq4jeAAKRxLBlT0WbU/SV3IW5tauzWw4GOOQICPEgRHRBgDk9ig2fGHNpUEqQVaDGupdzS6MzpngHhLn0GmMICPEgxlq/X5g/5FJ/pG6B7YW+ETzDhbeBoujSszitVBFyy88ICPAg0Dmid9ftGP2IWCHXoLdFSstqzayxNca/V3tukBqlJo0ICPAgnUZz23PRjGSlr3+fOPctKiywix828aB2Cump/TR0icIICAAFiJYNc9cZAQPztDo=",
+            "upgraded": true
+        },
+        "batch_id": "urn:uuid:e33a8337-b63d-443b-b1cc-9fd7fe603f9a",
+        "merkle_root": "2d5b876259d7b21d95c3b75354d35f62f1eb9ce60b17a268c8d1732417c15882",
+        "merkle_path": [
+            {
+                "hash": "5a8d5494d0e9d5837b2257cb2478527ebbd4e0d2f37287b57c0bd67a6970b9f5",
+                "position": "right"
+            },
+            {
+                "hash": "ee9f129a4d457618c0aa1a30812eb810cfa081d62153d81dc4eadbbcacf8fe42",
+                "position": "left"
+            },
+            {
+                "hash": "dc2b80bbdda5ac1a6504b7fd74fb0233eea2cd6435d0ce80e3eb85e13b49d420",
+                "position": "right"
+            },
+            {
+                "hash": "e0b607947da4e7c601e79e13122a35bc32a4f95ee5ebc918b8e117f2979b2865",
+                "position": "right"
+            },
+            {
+                "hash": "1b25b7b87c2ceb5cf67558a136b39fa82cbb4c540d40c5142caceed90f377e15",
+                "position": "right"
+            }
+        ]
+    },
+    "parent": null
+}

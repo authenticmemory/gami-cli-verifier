@@ -16,6 +16,21 @@ function fixture() {
     return validation.value;
 }
 
+function productionDidDocument(): unknown {
+    return JSON.parse(
+        readFileSync(
+            join(
+                process.cwd(),
+                "test",
+                "fixtures",
+                "production",
+                "gedenkstaette-flossenbuerg.did.json",
+            ),
+            "utf8",
+        ),
+    ) as unknown;
+}
+
 describe("verifyLocal", () => {
     it("keeps a successful Phase 2 result indeterminate", async () => {
         const gpr = fixture();
@@ -26,7 +41,7 @@ describe("verifyLocal", () => {
                 expect.objectContaining({ name: "document_hash", status: "passed" }),
                 expect.objectContaining({ name: "signature_math", status: "passed" }),
                 expect.objectContaining({ name: "institutional_identity", status: "skipped" }),
-                expect.objectContaining({ name: "bitcoin_timestamp", status: "skipped" }),
+                expect.objectContaining({ name: "bitcoin_timestamp", status: "indeterminate" }),
             ]),
         );
     });
@@ -36,6 +51,48 @@ describe("verifyLocal", () => {
         expect(result.status).toBe("failed");
         expect(result.checks).toContainEqual(
             expect.objectContaining({ name: "document_hash", status: "failed" }),
+        );
+    });
+
+    it("passes offline institutional authorization from a matching DID document", async () => {
+        const gpr = fixture();
+        const result = await verifyLocal(gpr.subject.file_hash, gpr, {
+            didDocument: productionDidDocument(),
+        });
+        expect(result.status).toBe("indeterminate");
+        expect(result.checks).toContainEqual(
+            expect.objectContaining({ name: "institutional_identity", status: "passed" }),
+        );
+        expect(result.evidence).toMatchObject({
+            key_source: "did-evidence",
+            did_authorization: "passed",
+            did_evidence_source: "provided-current",
+        });
+    });
+
+    it("fails when supplied DID evidence authorizes a different key", async () => {
+        const gpr = fixture();
+        const did = "did:web:gedenkstaette-flossenbuerg.de";
+        const result = await verifyLocal(gpr.subject.file_hash, gpr, {
+            didDocument: {
+                id: did,
+                assertionMethod: [
+                    {
+                        id: gpr.proof.key_id,
+                        type: "JsonWebKey2020",
+                        controller: did,
+                        publicKeyJwk: {
+                            kty: "OKP",
+                            crv: "Ed25519",
+                            x: Buffer.alloc(32).toString("base64url"),
+                        },
+                    },
+                ],
+            },
+        });
+        expect(result.status).toBe("failed");
+        expect(result.checks).toContainEqual(
+            expect.objectContaining({ name: "institutional_identity", status: "failed" }),
         );
     });
 });
