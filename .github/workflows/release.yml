@@ -47,6 +47,8 @@ jobs:
                   subject-path: release/*
             - name: Publish to npm with registry provenance
               if: github.event_name == 'push'
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: npm publish release/*.tgz --access public --provenance
             - name: Create GitHub release
               if: github.event_name == 'push'
