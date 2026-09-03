@@ -9,7 +9,7 @@ export interface DidAuthorization {
     did?: string;
     keyId?: string;
     publicKeyHex?: string;
-    evidenceSource: "none" | "provided-current";
+    evidenceSource: "none" | "provided-current" | "resolved-current";
 }
 
 function isObject(value: unknown): value is JsonObject {
@@ -138,6 +138,7 @@ export function authorizeDidKey(
     keyId: string,
     embeddedPublicKeyHex?: string,
     overriddenPublicKeyHex?: string,
+    evidenceSource: "provided-current" | "resolved-current" = "provided-current",
 ): DidAuthorization {
     const parsed = parseDidKeyId(keyId);
     if (document === undefined) {
@@ -163,7 +164,7 @@ export function authorizeDidKey(
         return {
             status: "failed",
             message: "DID evidence must be a JSON object",
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
     if (document.id !== parsed.did) {
@@ -172,7 +173,7 @@ export function authorizeDidKey(
             message: `DID document id does not match ${parsed.did}`,
             did: parsed.did,
             keyId,
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
     let method: JsonObject | undefined;
@@ -184,7 +185,7 @@ export function authorizeDidKey(
             message: error instanceof Error ? error.message : "DID key definition is ambiguous",
             did: parsed.did,
             keyId,
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
     if (!method) {
@@ -193,7 +194,7 @@ export function authorizeDidKey(
             message: `${keyId} is not authorized by assertionMethod`,
             did: parsed.did,
             keyId,
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
     const controller =
@@ -206,7 +207,7 @@ export function authorizeDidKey(
             message: `Authorized verification method controller does not match ${parsed.did}`,
             did: parsed.did,
             keyId,
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
 
@@ -222,7 +223,7 @@ export function authorizeDidKey(
             message,
             did: parsed.did,
             keyId,
-            evidenceSource: "provided-current",
+            evidenceSource,
         };
     }
     for (const [label, hex] of [
@@ -236,16 +237,16 @@ export function authorizeDidKey(
                 did: parsed.did,
                 keyId,
                 publicKeyHex: bytesToHex(key),
-                evidenceSource: "provided-current",
+                evidenceSource,
             };
         }
     }
     return {
         status: "passed",
-        message: `${keyId} is authorized for assertion by the supplied current did:web document`,
+        message: `${keyId} is authorized for assertion by the ${evidenceSource === "resolved-current" ? "live" : "supplied"} current did:web document`,
         did: parsed.did,
         keyId,
         publicKeyHex: bytesToHex(key),
-        evidenceSource: "provided-current",
+        evidenceSource,
     };
 }

@@ -1,0 +1,5 @@
+GAMI batch fixture A
+
+One of two records signed in a single YubiKey touch, to exercise the
+batch-anchored path: proof.timestamp.merkle_path is non-empty and the OTS
+proof commits to the shared batch root rather than to this document.

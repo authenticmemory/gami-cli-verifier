@@ -1,4 +1,5 @@
 import type { Gpr } from "./gpr";
+import type { BitcoinBlockEvidence } from "./bitcoin";
 import { gprLifecycle } from "./gpr";
 import { authorizeDidKey } from "./did-document";
 import { OUTPUT_VERSION, type CheckResult, type CommandResult } from "./result";
@@ -8,7 +9,10 @@ import { verifyTimestamp } from "./timestamp";
 export interface LocalVerifyOptions {
     publicKeyHex?: string;
     didDocument?: unknown;
-    bitcoinEvidence?: unknown;
+    bitcoinEvidence?: BitcoinBlockEvidence;
+    didEvidenceSource?: "provided-current" | "resolved-current";
+    didResolutionWarning?: string;
+    bitcoinResolutionWarning?: string;
 }
 
 export async function verifyLocal(
@@ -38,6 +42,7 @@ export async function verifyLocal(
         gpr.proof.key_id,
         gpr.proof.public_key_hex,
         options.publicKeyHex,
+        options.didEvidenceSource,
     );
     const verificationKey = options.publicKeyHex ?? authorization.publicKeyHex;
     const verificationKeySource = options.publicKeyHex
@@ -71,8 +76,8 @@ export async function verifyLocal(
 
     checks.push({
         name: "institutional_identity",
-        status: options.didDocument === undefined ? "skipped" : authorization.status,
-        message: authorization.message,
+        status: options.didDocument === undefined ? "indeterminate" : authorization.status,
+        message: options.didResolutionWarning ?? authorization.message,
     });
     const timestampResult = verifyTimestamp(gpr, options.bitcoinEvidence);
     checks.push({
@@ -85,7 +90,7 @@ export async function verifyLocal(
                   : timestampResult.status === "missing"
                     ? "skipped"
                     : "indeterminate",
-        message: timestampResult.message,
+        message: options.bitcoinResolutionWarning ?? timestampResult.message,
     });
 
     const failed =
@@ -120,7 +125,7 @@ export async function verifyLocal(
             bitcoin_height: timestampResult.bitcoinHeight,
             bitcoin_block_hash: timestampResult.bitcoinBlockHash,
             bitcoin_block_time: timestampResult.bitcoinBlockTime,
-            bitcoin_checkpoint_height: timestampResult.checkpointHeight,
+            bitcoin_source: timestampResult.bitcoinSource,
         },
     };
 }

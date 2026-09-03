@@ -1,0 +1,50 @@
+{
+  "id": "urn:uuid:d54e3d8a-561a-45ad-9fe7-cbd6e5410009",
+  "status": "upgraded",
+  "key_id": "did:web:acre-ultimatum-repaying.ngrok-free.dev#key-2",
+  "public_key_hex": "fd02798de1a987a43aeb2bd7a8b3e120d5db600b7083a0f9afa2fff5c4ed1362",
+  "file_hash": "sha256:6384d0bddae6b89b01b36e4eb4520c59f5d4f163fdc90d8900b54c86e3c3a568",
+  "filename": "gami-batch-test-a.txt",
+  "signature": {
+    "scheme": "webauthn-ed25519",
+    "signature_hex": "44e651c9aa7f40efb1f75b5f3fb4f9d42ec5d73e7b143be549b062038544062f6502f29a4d25b964e99cfccaf84bd3a962b04aa415bd1003859fdd8dff1a9800",
+    "signing_json_sha256": "651dedb992b1aed532fd14879ff1f15b6d52e43e8ba8f7c8a7e1191fd863641d",
+    "batch_signed": true,
+    "signing_batch_id": "urn:uuid:95e5a57b-f423-45ce-9653-9df436c7f919",
+    "signing_merkle_root": "26e6d60ad5abbf9586fc64ec9d955be55d957fa86f26bc4da3683bd0ccb5dd0f",
+    "signed_message": "authenticator_data || SHA256(client_data_json)",
+    "webauthn_challenge_b64url": "JubWCtWrv5WG_GTsnZVb5V2Vf6hvJrxNo2g70My13Q8",
+    "webauthn_challenge_rule": "clientDataJSON.challenge == fold(SHA256(signing.json), proof.merkle_path)"
+  },
+  "timestamp": {
+    "document_hash": "sha256:8d1f07b746fee4ad6f80bf2a90af46d3edb7a9b745f0e47c844ae44523ce9fdf",
+    "canonical_json_sha256": "sha256:8d1f07b746fee4ad6f80bf2a90af46d3edb7a9b745f0e47c844ae44523ce9fdf",
+    "canonical_matches_document_hash": true,
+    "submitted_at": "2026-09-02T09:30:34Z",
+    "calendar": "https://alice.btc.calendar.opentimestamps.org",
+    "upgraded": true,
+    "batch_timestamped": true,
+    "timestamp_merkle_root": "4fae6ef0c013b927b493a89fd7b3181a2773ac7e4ce3be263dd113a8291b2c52",
+    "ots_leaf_hex": "4fae6ef0c013b927b493a89fd7b3181a2773ac7e4ce3be263dd113a8291b2c52",
+    "ots_leaf_source": "proof.timestamp.merkle_root (fold document_hash through timestamp.merkle_path)",
+    "fold_error": null,
+    "bitcoin_block_height": 965149,
+    "block_merkle_root_ots_order": "512384b4bc11b9874a8ce5446fe9c8b1a453cf899c86c5cf9e719cf04dafba25",
+    "block_merkle_root_explorer_order": "25baaf4df09c719ecfc5869c89cf53a4b1c8e96f44e58c4a87b911bcb4842351",
+    "ots_verify_command": "ots verify d54e3d8a-561a-45ad-9fe7-cbd6e5410009.canonical.json d54e3d8a-561a-45ad-9fe7-cbd6e5410009.ots"
+  },
+  "bitcoin_evidence": {
+    "height": 965149,
+    "block_hash": "000000000000000000020281c4cd2fed129dc478b05871379eaaf4ccfb58831e",
+    "block_header_hex": "00000020d229f9a00185169a6c708060433ac47a02ebbefa7c8f01000000000000000000512384b4bc11b9874a8ce5446fe9c8b1a453cf899c86c5cf9e719cf04dafba2525f4976ac13c0217a4dd753d",
+    "block_time_unix": 1788343333,
+    "block_time_utc": "2026-09-02T10:02:13.000Z",
+    "merkle_root_in_header": "25baaf4df09c719ecfc5869c89cf53a4b1c8e96f44e58c4a87b911bcb4842351",
+    "matches_proof": true,
+    "how_to_check_offline": [
+      "sha256(sha256(d54e3d8a-561a-45ad-9fe7-cbd6e5410009.blockheader.hex decoded)) reversed == block_hash",
+      "bytes 36..68 of the header, reversed, == merkle_root_in_header",
+      "that value is what this record's .ots folds to"
+    ]
+  }
+}

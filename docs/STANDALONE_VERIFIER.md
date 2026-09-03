@@ -119,8 +119,8 @@ the CLI never upgrades a partial result into complete GAMI proof validity.
 
 ### Phase 3 — identity verification
 
-- Implemented in Phase 3A: accept a caller-supplied current `did:web` document
-  without using a network, registry, database, or GAMI service.
+- Implemented: accept a caller-supplied current `did:web` document or resolve it
+  directly over HTTPS from `proof.key_id`, without trusting a registry result.
 - Implemented in Phase 3A: require the exact GPR key under `assertionMethod`,
   validate its controller, decode Ed25519 Multikey or JWK material, and bind it
   to the key that verifies the GPR signature.
@@ -138,11 +138,10 @@ the CLI never upgrades a partial result into complete GAMI proof validity.
   base64 raw OpenTimestamps tree using exact-pinned `@otskit/core` `0.2.0`.
 - Implemented: distinguish pending calendar proofs, embedded Bitcoin attestations,
   malformed proofs, and independently verified anchors.
-- Implemented: validate raw Bitcoin headers, proof of work, header linkage, and
-  connection to package-pinned Bitcoin mainnet checkpoints using offline bundles.
-- Implemented: lock real pending/upgraded single-record and two-member batch
-  vectors as conformance tests.
-- Future backend: optionally query a caller-operated local Bitcoin Core node.
+- Implemented: validate canonical raw Bitcoin headers and proof of work using a
+  caller-operated Bitcoin Core node or agreement between two public providers.
+- Implemented: lock real pending/upgraded single-record and non-degenerate
+  two-member batch vectors as conformance tests.
 
 ### Phase 5 — distribution hardening
 
@@ -151,9 +150,9 @@ the CLI never upgrades a partial result into complete GAMI proof validity.
 - Implemented: inspect the npm allowlist and execute the installed tarball in CI.
 - Implemented: publish npm provenance, SHA-256 checksums, a CycloneDX SBOM, and
   GitHub-signed build attestations from immutable, SHA-pinned workflow actions.
-- Implemented: disclose the verifier version and package-pinned Bitcoin
-  checkpoints through `gami version` and every JSON verification result.
-- Documented: checkpoint admission, release operation, and independent artifact
+- Implemented: disclose the verifier version and supported Bitcoin sources
+  through `gami version` and every JSON verification result.
+- Documented: release operation and independent artifact
   verification in `docs/RELEASING.md`.
 
 ## Output contract
@@ -174,10 +173,10 @@ Machine output is versioned independently of the package:
     ],
     "verifier": {
         "name": "@authenticmemory/gami",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "node": "v20.x.x",
         "bitcoin_network": "bitcoin-mainnet",
-        "bitcoin_checkpoints": []
+        "bitcoin_sources": ["bitcoin-core", "blockstream.info", "mempool.space"]
     }
 }
 ```

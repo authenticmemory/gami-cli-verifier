@@ -25,9 +25,9 @@ export function renderHuman(result: CommandResult): string {
         "",
         result.command === "verify"
             ? identity?.status === "passed" && timestamp?.status === "passed"
-                ? "File integrity, signature, supplied current DID authorization, and Bitcoin anchoring verified."
+                ? "File integrity, signature, current DID authorization, and Bitcoin anchoring verified."
                 : identity?.status === "passed"
-                  ? "Local cryptography and supplied current DID authorization checked. Bitcoin anchoring is not yet verified."
+                  ? "Local cryptography and current DID authorization checked. Bitcoin anchoring is not yet verified."
                   : timestamp?.status === "passed"
                     ? "Local cryptography and Bitcoin anchoring checked. Institutional DID authorization is not verified."
                     : "Local cryptography checked. Institutional DID authorization and Bitcoin anchoring are not yet fully verified."

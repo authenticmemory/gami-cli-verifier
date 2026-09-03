@@ -6,7 +6,7 @@ interface VersionArguments {
 }
 
 export const command = "version";
-export const describe = "Show the verifier version and pinned Bitcoin checkpoints";
+export const describe = "Show the verifier version and supported Bitcoin sources";
 
 export function builder(yargs: Argv): Argv<VersionArguments> {
     return yargs.option("json", {
@@ -24,6 +24,5 @@ export function handler(argv: ArgumentsCamelCase<VersionArguments>): void {
     }
     console.log(`${info.name} ${info.version}`);
     console.log(`Node.js ${info.node}`);
-    for (const checkpoint of info.bitcoin_checkpoints)
-        console.log(`Bitcoin checkpoint ${checkpoint.height}: ${checkpoint.hash}`);
+    console.log(`Bitcoin sources: ${info.bitcoin_sources.join(", ")}`);
 }

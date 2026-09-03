@@ -4,7 +4,7 @@ import {
     verifyBitcoinAttestation,
     type BitcoinAttestation,
 } from "@otskit/core";
-import { validateBitcoinEvidence } from "./bitcoin";
+import type { BitcoinBlockEvidence } from "./bitcoin";
 import { canonicalForTimestamp } from "./canonical";
 import type { Gpr } from "./gpr";
 import { bytesToHex, hexToBytes, sha256Bytes } from "./hash";
@@ -18,13 +18,16 @@ export interface TimestampVerification {
     bitcoinHeight?: number;
     bitcoinBlockHash?: string;
     bitcoinBlockTime?: number;
-    checkpointHeight?: number;
+    bitcoinSource?: string;
     pendingCalendars?: string[];
 }
 
 const MAX_OTS_BYTES = 1024 * 1024;
 
-export function verifyTimestamp(gpr: Gpr, bitcoinEvidence?: unknown): TimestampVerification {
+export function verifyTimestamp(
+    gpr: Gpr,
+    bitcoinEvidence?: BitcoinBlockEvidence,
+): TimestampVerification {
     const timestamp = gpr.proof.timestamp;
     if (!timestamp) return { status: "missing", message: "GPR has no timestamp evidence" };
 
@@ -125,7 +128,7 @@ export function verifyTimestamp(gpr: Gpr, bitcoinEvidence?: unknown): TimestampV
     if (bitcoinEvidence === undefined) {
         return {
             status: "attested",
-            message: `OTS proof contains a Bitcoin attestation at height ${selected.attestation.height}, but no offline chain evidence was supplied`,
+            message: `OTS proof contains a Bitcoin attestation at height ${selected.attestation.height}, but the canonical Bitcoin chain was not checked`,
             canonicalHash,
             otsLeaf,
             bitcoinHeight: selected.attestation.height,
@@ -133,22 +136,25 @@ export function verifyTimestamp(gpr: Gpr, bitcoinEvidence?: unknown): TimestampV
     }
 
     try {
-        const evidence = validateBitcoinEvidence(bitcoinEvidence, selected.attestation.height);
+        if (bitcoinEvidence.height !== selected.attestation.height)
+            throw new Error(
+                `Bitcoin evidence is for height ${bitcoinEvidence.height}, expected ${selected.attestation.height}`,
+            );
         const blockTime = verifyBitcoinAttestation(
             selected.msg,
             selected.attestation,
-            evidence.firstHeader,
-            evidence.firstHeight,
+            bitcoinEvidence.header,
+            bitcoinEvidence.height,
         );
         return {
             status: "verified",
-            message: `OTS commitment is verified in Bitcoin block ${selected.attestation.height} and connected to a package-pinned mainnet checkpoint`,
+            message: `OTS commitment is verified in canonical Bitcoin block ${selected.attestation.height} using ${bitcoinEvidence.source}`,
             canonicalHash,
             otsLeaf,
             bitcoinHeight: selected.attestation.height,
-            bitcoinBlockHash: evidence.firstHash,
+            bitcoinBlockHash: bitcoinEvidence.blockHash,
             bitcoinBlockTime: blockTime,
-            checkpointHeight: evidence.checkpointHeight,
+            bitcoinSource: bitcoinEvidence.source,
         };
     } catch (error) {
         return {
