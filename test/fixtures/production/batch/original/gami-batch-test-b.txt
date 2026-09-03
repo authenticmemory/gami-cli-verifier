@@ -1,0 +1,5 @@
+GAMI batch fixture B
+
+The second member of the same batch. It shares one signature, one OTS
+submission and one Bitcoin block with fixture A, but carries its own
+inclusion path to the batch root.

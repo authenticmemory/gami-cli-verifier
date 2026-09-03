@@ -1,0 +1,36 @@
+{
+  "id": "urn:uuid:d5be2b39-8e9d-4547-a8ec-4067f17a2bca",
+  "status": "stamped",
+  "key_id": "did:web:acre-ultimatum-repaying.ngrok-free.dev#key-2",
+  "public_key_hex": "fd02798de1a987a43aeb2bd7a8b3e120d5db600b7083a0f9afa2fff5c4ed1362",
+  "file_hash": "sha256:8c8f8f52b4f6b962ea046b5bb205973950020fa4874722cf099ea46b3988fa9d",
+  "filename": "gami-batch-test-b.txt",
+  "signature": {
+    "scheme": "webauthn-ed25519",
+    "signature_hex": "44e651c9aa7f40efb1f75b5f3fb4f9d42ec5d73e7b143be549b062038544062f6502f29a4d25b964e99cfccaf84bd3a962b04aa415bd1003859fdd8dff1a9800",
+    "signing_json_sha256": "a783190a46303744fbaebf384d1e1695d5edd83d2dafe11359da063ac19d2b31",
+    "batch_signed": true,
+    "signing_batch_id": "urn:uuid:95e5a57b-f423-45ce-9653-9df436c7f919",
+    "signing_merkle_root": "26e6d60ad5abbf9586fc64ec9d955be55d957fa86f26bc4da3683bd0ccb5dd0f",
+    "signed_message": "authenticator_data || SHA256(client_data_json)",
+    "webauthn_challenge_b64url": "JubWCtWrv5WG_GTsnZVb5V2Vf6hvJrxNo2g70My13Q8",
+    "webauthn_challenge_rule": "clientDataJSON.challenge == fold(SHA256(signing.json), proof.merkle_path)"
+  },
+  "timestamp": {
+    "document_hash": "sha256:09cec3d7953c0558fc64e3502c00a9bec5150264a771e23db0ca3e1d3bafb973",
+    "canonical_json_sha256": "sha256:09cec3d7953c0558fc64e3502c00a9bec5150264a771e23db0ca3e1d3bafb973",
+    "canonical_matches_document_hash": true,
+    "submitted_at": "2026-09-02T09:30:34Z",
+    "calendar": "https://alice.btc.calendar.opentimestamps.org",
+    "upgraded": false,
+    "batch_timestamped": true,
+    "timestamp_merkle_root": "4fae6ef0c013b927b493a89fd7b3181a2773ac7e4ce3be263dd113a8291b2c52",
+    "ots_leaf_hex": "4fae6ef0c013b927b493a89fd7b3181a2773ac7e4ce3be263dd113a8291b2c52",
+    "ots_leaf_source": "proof.timestamp.merkle_root (fold document_hash through timestamp.merkle_path)",
+    "fold_error": null,
+    "bitcoin_block_height": null,
+    "block_merkle_root_ots_order": null,
+    "block_merkle_root_explorer_order": null,
+    "ots_verify_command": "ots verify d5be2b39-8e9d-4547-a8ec-4067f17a2bca.canonical.json d5be2b39-8e9d-4547-a8ec-4067f17a2bca.ots"
+  }
+}

@@ -4,6 +4,7 @@ import { describe, expect, it } from "@jest/globals";
 import type { Gpr } from "./gpr";
 import { validateGpr } from "./gpr";
 import { verifyTimestamp } from "./timestamp";
+import { validateBitcoinHeader } from "./bitcoin";
 
 function jsonFixture(name: string): unknown {
     return JSON.parse(
@@ -15,6 +16,15 @@ function gprFixture(name: string): Gpr {
     const result = validateGpr(jsonFixture(name));
     if (!result.valid) throw new Error(`invalid fixture: ${JSON.stringify(result.issues)}`);
     return result.value;
+}
+
+function bitcoinEvidence() {
+    const legacy = jsonFixture("bitcoin-965005.evidence.json") as {
+        checkpoint: { hash: string };
+        headers: Array<{ height: number; header: string }>;
+    };
+    const first = legacy.headers[0]!;
+    return validateBitcoinHeader(first.height, first.header, "test", legacy.checkpoint.hash);
 }
 
 describe("verifyTimestamp production vectors", () => {
@@ -37,17 +47,17 @@ describe("verifyTimestamp production vectors", () => {
         });
     });
 
-    it("verifies the upgraded proof against independently obtained checkpoint evidence", () => {
+    it("verifies the upgraded proof against a canonical block header", () => {
         const result = verifyTimestamp(
             gprFixture("phase4-single-upgraded.gpr.json"),
-            jsonFixture("bitcoin-965005.evidence.json"),
+            bitcoinEvidence(),
         );
         expect(result).toMatchObject({
             status: "verified",
             bitcoinHeight: 965005,
             bitcoinBlockHash: "0000000000000000000176c1e042b4f8712d984f559e4db6ddb9b46a538611a0",
             bitcoinBlockTime: 1788248915,
-            checkpointHeight: 965005,
+            bitcoinSource: "test",
         });
     });
 
@@ -62,10 +72,8 @@ describe("verifyTimestamp production vectors", () => {
         pending.proof.timestamp!.upgraded = true;
         expect(verifyTimestamp(pending)).toMatchObject({ status: "failed" });
 
-        const evidence = jsonFixture("bitcoin-965005.evidence.json") as {
-            headers: Array<{ header: string }>;
-        };
-        evidence.headers[0]!.header = `${evidence.headers[0]!.header.slice(0, -1)}1`;
+        const evidence = bitcoinEvidence();
+        evidence.header[36] = evidence.header[36]! ^ 1;
         expect(
             verifyTimestamp(gprFixture("phase4-single-upgraded.gpr.json"), evidence),
         ).toMatchObject({ status: "failed" });

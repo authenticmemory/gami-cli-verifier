@@ -18,6 +18,7 @@ export interface CommandResult {
     checks: CheckResult[];
     gpr_id?: string;
     lifecycle?: "unsigned" | "signed" | "stamped" | "upgraded";
+    path?: string;
     evidence?: {
         document_hash?: string;
         recorded_hash?: string;
@@ -29,7 +30,7 @@ export interface CommandResult {
         webauthn_user_verified?: boolean;
         did?: string;
         did_key_id?: string;
-        did_evidence_source?: "none" | "provided-current";
+        did_evidence_source?: "none" | "provided-current" | "resolved-current";
         did_authorization?: "passed" | "failed" | "indeterminate";
         timestamp_document_hash?: string;
         timestamp_ots_leaf?: string;
@@ -37,7 +38,7 @@ export interface CommandResult {
         bitcoin_height?: number;
         bitcoin_block_hash?: string;
         bitcoin_block_time?: number;
-        bitcoin_checkpoint_height?: number;
+        bitcoin_source?: string;
     };
 }
 

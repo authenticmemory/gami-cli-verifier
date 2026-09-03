@@ -40,7 +40,10 @@ describe("verifyLocal", () => {
             expect.arrayContaining([
                 expect.objectContaining({ name: "document_hash", status: "passed" }),
                 expect.objectContaining({ name: "signature_math", status: "passed" }),
-                expect.objectContaining({ name: "institutional_identity", status: "skipped" }),
+                expect.objectContaining({
+                    name: "institutional_identity",
+                    status: "indeterminate",
+                }),
                 expect.objectContaining({ name: "bitcoin_timestamp", status: "indeterminate" }),
             ]),
         );

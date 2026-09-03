@@ -1,35 +1,23 @@
-# Release and checkpoint policy
+# Release policy
 
 The npm package is part of the verifier's trust boundary. Reviewing source code is
 not enough: users must be able to connect the installed tarball to the reviewed
-Git commit and see which Bitcoin checkpoint it trusts.
+Git commit and understand which external trust sources it can use.
 
-## Bitcoin checkpoints
+## Bitcoin trust sources
 
-`src/domain/bitcoin.ts` is the authoritative checkpoint list. A checkpoint may be
-added only when all of these conditions are met:
-
-1. its block header satisfies Bitcoin proof of work;
-2. its hash and height agree across at least two independent data sources;
-3. it has at least 100 confirmations when selected;
-4. the pull request records the sources, observation date, and reviewer;
-5. tests reject a changed hash and evidence that does not link to the checkpoint.
-
-Checkpoint 965005 was observed on 2026-09-02. Blockstream and mempool.space both
-returned `0000000000000000000176c1e042b4f8712d984f559e4db6ddb9b46a538611a0`.
-The fixture additionally verifies the raw header's proof of work and chain links.
-
-Agreement between websites is evidence, not absolute authority. For a production
-release, a maintainer should also confirm the checkpoint using an independently
-operated Bitcoin Core node:
+The verifier first asks a caller-operated Bitcoin Core node for the canonical
+block hash and header. If Core is unavailable, `auto` requires Blockstream and
+mempool.space to return the same block hash and validates the returned header and
+proof of work. Provider agreement is weaker than an independently operated node
+and discloses the queried height and caller IP address.
 
 ```sh
-bitcoin-cli getblockhash 965005
+bitcoin-cli getblockhash <height>
 ```
 
-Checkpoint changes require ordinary code review. They must never be fetched or
-silently replaced at runtime. `gami version --json` discloses the exact checkpoint
-compiled into an installed release.
+`gami version --json` discloses the supported sources. Provider additions or trust
+policy changes require ordinary code review and a minor-version release.
 
 ## Release procedure
 
@@ -44,10 +32,10 @@ compiled into an installed release.
 5. Verify the public result from a clean directory.
 
 ```sh
-npm view @authenticmemory/gami@0.1.0 dist.integrity
-npm install --global @authenticmemory/gami@0.1.0
+npm view @authenticmemory/gami@0.2.0 dist.integrity
+npm install --global @authenticmemory/gami@0.2.0
 gami version --json
-gh attestation verify gami-0.1.0.tgz --repo authenticmemory/gami-cli-verifier
+gh attestation verify gami-0.2.0.tgz --repo authenticmemory/gami-cli-verifier
 sha256sum --check SHA256SUMS
 ```
 

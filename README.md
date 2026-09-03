@@ -6,10 +6,10 @@ the GAMI web application, database, or API to inspect local records.
 
 The verifier validates the structure of a local GPR, streams the document through
 SHA-256, and independently verifies deployed raw-Ed25519 and WebAuthn/Merkle
-signatures. Phase 3A can additionally verify current `did:web` authorization from
-a caller-supplied DID document. Phase 4 verifies GAMI's raw OpenTimestamps proof
-and can establish Bitcoin mainnet membership from an offline header-chain bundle
-connected to a package-pinned checkpoint.
+signatures. It verifies current `did:web` authorization using supplied evidence or
+direct HTTPS resolution. It verifies OpenTimestamps anchors using a local Bitcoin
+Core node or agreement between Blockstream and mempool.space. It never needs the
+GAMI application or registry to validate a supplied GPR.
 
 ## Install and run
 
@@ -17,11 +17,13 @@ connected to a package-pinned checkpoint.
 npm install --global @authenticmemory/gami
 gami --help
 gami version --json
-gami inspect ./record.gpr.json
+gami inspect ./first.gpr.json ./second.gpr.json
 gami inspect ./record.gpr.json --json
 gami verify ./document.pdf ./record.gpr.json
 gami verify ./document.pdf ./record.gpr.json --did-evidence ./institution.did.json
-gami verify ./document.pdf ./record.gpr.json --bitcoin-evidence ./bitcoin-evidence.json
+gami verify ./document.pdf ./record.gpr.json --bitcoin-source core
+gami verify ./document.pdf ./record.gpr.json --bitcoin-source public
+gami verify ./document.pdf ./record.gpr.json --offline
 gami verify ./document.pdf ./record.gpr.json --json
 ```
 
@@ -37,7 +39,7 @@ pnpm build
 
 ## Commands
 
-### `gami inspect <gpr>`
+### `gami inspect <gpr..>`
 
 Parses a GPR JSON file and validates the frozen GPR v1 envelope and field
 encodings. This is structural validation only; a structurally valid record may
@@ -46,7 +48,7 @@ timestamp.
 
 Options:
 
-- `--json`: emit the versioned machine-readable result.
+- `--json`: emit one versioned JSON object per input as newline-delimited JSON.
 
 ### `gami verify <document> <gpr>`
 
@@ -58,12 +60,13 @@ Options:
 
 - `--public-key <hex>`: override the embedded 32-byte Ed25519 key; the result
   reports the key source as `overridden`.
-- `--did-evidence <path>`: verify the exact GPR signing key against
-  `assertionMethod` in a caller-supplied current `did:web` document. No network,
-  registry, API, or database lookup is performed.
-- `--bitcoin-evidence <path>`: verify the raw OTS proof against offline Bitcoin
-  headers connected to a checkpoint pinned by this package. No calendar, block
-  explorer, Bitcoin node, or GAMI service is contacted.
+- `--did-evidence <path>`: use a caller-supplied current `did:web` document.
+  Without this option, the CLI resolves the document directly from `proof.key_id`.
+- `--bitcoin-source <auto|core|public|none>`: `auto` tries local Bitcoin Core and
+  then requires Blockstream and mempool.space to agree; default `auto`.
+- `--bitcoin-cli <path>`: path to `bitcoin-cli` when it is not on `PATH`.
+- `--offline`: disable all DID and Bitcoin network access. Supplied DID evidence
+  is still checked, but Bitcoin chain membership remains indeterminate.
 - `--json`: emit the versioned machine-readable result.
 
 A run exits `0` only when file integrity, signature mathematics, institutional
@@ -85,16 +88,15 @@ are documented in [docs/STANDALONE_VERIFIER.md](docs/STANDALONE_VERIFIER.md).
 
 ## Security
 
-Phase 3A can prove that the signing key is authorized in a supplied current
-`did:web` document. It does not prove historical authorization at signing time.
-Native `did:webvh` history remains pending. Bitcoin verification is offline and
-depends on explicit evidence connected to a checkpoint pinned by the installed
-CLI release.
+Current `did:web` resolution proves current authorization, not authorization at
+the historical signing time. Native `did:webvh` history remains pending. Public
+Bitcoin verification reveals the requested block height and the user's IP address
+to both providers; local Bitcoin Core is the stronger and more private source.
 
-Every JSON result includes the package version, Node.js version, and pinned
-Bitcoin checkpoints. Releases are tested from the packed npm tarball and publish
+Every JSON result includes the package version, Node.js version, and supported
+Bitcoin sources. Releases are tested from the packed npm tarball and publish
 checksums, a CycloneDX SBOM, npm provenance, and GitHub build attestations. See
-[docs/RELEASING.md](docs/RELEASING.md) for the checkpoint-review and release
+[docs/RELEASING.md](docs/RELEASING.md) for the release
 verification procedure.
 
 ## License
