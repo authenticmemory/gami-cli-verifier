@@ -74,7 +74,7 @@
         "commitizen": "^4.3.2",
         "cz-conventional-changelog": "^3.3.0",
         "husky": "^9.1.7",
-        "jest": "^30.4.2",
+        "jest": "^30.5.0",
         "jscpd": "^5.0.15",
         "oxfmt": "^0.63.0",
         "oxlint": "^1.78.0",
