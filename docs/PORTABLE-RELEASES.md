@@ -87,15 +87,19 @@ repository signature.
 3. Have an independent user test the archive on the target OS without Node/npm.
    Test an original document/GPR pair, a changed document, offline mode, and JSON
    output. Exit 2 is an incomplete verification, not a successful full proof.
-4. Publish the approved archives to a public release or copy them into the
-   website's `public/downloads/gami-verifier/` directory. The workflow deliberately
-   does not race the existing npm release workflow or attach unsigned previews
-   to a public release. Actions artifacts expire after 30 days.
-5. Set the matching `archive`, `checksum`, and Linux `signature` URLs in
-   `AuthenticMemory_Website/src/data/verifier-downloads.ts`. Use versioned URLs.
-   Both Technology and For Institutions consume this single manifest. Null URLs
-   keep unavailable builds unlinked. Do not link private Actions artifact URLs.
-6. Build the website and confirm that the public links work without GitHub login.
+4. For production, bump `package.json` to a new version and push its matching
+   `vX.Y.Z` tag. Do not reuse `v0.2.0`. Once all builds and signature checks pass,
+   the standalone workflow publishes Windows/Linux files and the download
+   manifest to GitHub Releases. The npm workflow attaches its separate artifacts.
+   macOS previews never enter the published download manifest.
+5. Configure the repository secret `NETLIFY_BUILD_HOOK` for the website's
+   production branch. The workflow triggers it after release publication.
+   The Netlify build verifies/downloads the release assets and enables links on
+   `/tools` in the same atomic deployment. Follow
+   `AuthenticMemory_Website/RELEASE-DOWNLOADS.md` for one-time setup.
+6. Confirm the Netlify deployment succeeded and test the public download links.
+   A successful build-hook request alone does not prove the website deployed.
+   Test-tag artifacts expire after 30 days; stable GitHub release assets persist.
 
 ## User installation and verification
 
