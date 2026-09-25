@@ -60,7 +60,7 @@
         "@otskit/core": "0.2.0",
         "consola": "3.4.2",
         "didwebvh-ts": "2.8.0",
-        "dotenv": "17.4.2",
+        "dotenv": "18.0.3",
         "json-canonicalize": "2.0.0",
         "picocolors": "1.1.1",
         "yargs": "18.1.0"
