@@ -91,7 +91,7 @@ jobs:
               run: bash scripts/sign-linux.sh release/downloads release/downloads/*.tar.gz release/downloads/*.cdx.json release/downloads/*.sha256
             - name: Attest packaged artifacts
               if: startsWith(github.ref, 'refs/tags/')
-              uses: actions/attest-build-provenance@43d14bc2b83dec42d39ecae14e916627a18bb661 # v3
+              uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
               with:
                   subject-path: release/downloads/*
             - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
