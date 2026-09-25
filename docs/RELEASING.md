@@ -16,7 +16,7 @@ and discloses the queried height and caller IP address.
 bitcoin-cli getblockhash <height>
 ```
 
-`gami version --json` discloses the supported sources. Provider additions or trust
+`gami-verify version --json` discloses the supported sources. Provider additions or trust
 policy changes require ordinary code review and a minor-version release.
 
 ## Release procedure
@@ -34,7 +34,7 @@ policy changes require ordinary code review and a minor-version release.
 ```sh
 npm view @authenticmemory/gami@0.2.0 dist.integrity
 npm install --global @authenticmemory/gami@0.2.0
-gami version --json
+gami-verify version --json
 gh attestation verify gami-0.2.0.tgz --repo authenticmemory/gami-cli-verifier
 sha256sum --check SHA256SUMS
 ```

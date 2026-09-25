@@ -9,7 +9,8 @@ export interface DidAuthorization {
     did?: string;
     keyId?: string;
     publicKeyHex?: string;
-    evidenceSource: "none" | "provided-current" | "resolved-current";
+    evidenceSource: "none" | "provided-current" | "resolved-current" | "resolved-history";
+    signatureKeyStatus?: "active" | "archived";
 }
 
 function isObject(value: unknown): value is JsonObject {
@@ -138,9 +139,14 @@ export function authorizeDidKey(
     keyId: string,
     embeddedPublicKeyHex?: string,
     overriddenPublicKeyHex?: string,
-    evidenceSource: "provided-current" | "resolved-current" = "provided-current",
+    evidenceSource:
+        | "provided-current"
+        | "resolved-current"
+        | "resolved-history" = "provided-current",
+    signatureKeyStatus?: "active" | "archived",
 ): DidAuthorization {
     const parsed = parseDidKeyId(keyId);
+    const documentKeyId = `${parsed.did}#${parsed.fragment}`;
     if (document === undefined) {
         return {
             status: "indeterminate",
@@ -150,7 +156,7 @@ export function authorizeDidKey(
             evidenceSource: "none",
         };
     }
-    if (parsed.method === "webvh") {
+    if (parsed.method === "webvh" && evidenceSource !== "resolved-history") {
         return {
             status: "indeterminate",
             message:
@@ -178,7 +184,7 @@ export function authorizeDidKey(
     }
     let method: JsonObject | undefined;
     try {
-        method = findAuthorizedMethod(document, parsed.did, keyId);
+        method = findAuthorizedMethod(document, parsed.did, documentKeyId);
     } catch (error) {
         return {
             status: "failed",
@@ -191,7 +197,7 @@ export function authorizeDidKey(
     if (!method) {
         return {
             status: "failed",
-            message: `${keyId} is not authorized by assertionMethod`,
+            message: `${documentKeyId} is not authorized by assertionMethod`,
             did: parsed.did,
             keyId,
             evidenceSource,
@@ -243,10 +249,14 @@ export function authorizeDidKey(
     }
     return {
         status: "passed",
-        message: `${keyId} is authorized for assertion by the ${evidenceSource === "resolved-current" ? "live" : "supplied"} current did:web document`,
+        message:
+            evidenceSource === "resolved-history"
+                ? `${documentKeyId} is authorized for assertion by the resolved did:webvh history at ${parsed.versionId}`
+                : `${documentKeyId} is authorized for assertion by the ${evidenceSource === "resolved-current" ? "live" : "supplied"} current did:web document`,
         did: parsed.did,
         keyId,
         publicKeyHex: bytesToHex(key),
         evidenceSource,
+        signatureKeyStatus,
     };
 }

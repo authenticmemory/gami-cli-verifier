@@ -1,30 +1,45 @@
-# GAMI CLI
+# GAMI Verify
 
-`gami` is the independent command-line verifier for GAMI Proof Records (GPRs).
-It is distributed through npm, requires Node.js 20 or newer, and does not need
-the GAMI web application, database, or API to inspect local records.
+`gami-verify` is the independent command-line verifier for GAMI Proof Records (GPRs).
+It supports npm installation (Node.js 20 or newer) and standalone executable
+builds that include Node.js. Neither needs the GAMI web application, database,
+or API to inspect local records. See [standalone downloads and signing](docs/PORTABLE-RELEASES.md)
+for build, release and installation instructions.
 
 The verifier validates the structure of a local GPR, streams the document through
 SHA-256, and independently verifies deployed raw-Ed25519 and WebAuthn/Merkle
 signatures. It verifies current `did:web` authorization using supplied evidence or
-direct HTTPS resolution. It verifies OpenTimestamps anchors using a local Bitcoin
-Core node or agreement between Blockstream and mempool.space. It never needs the
-GAMI application or registry to validate a supplied GPR.
+direct HTTPS resolution. It verifies pinned historical `did:webvh` authorization
+from the `?versionId=` in `proof.key_id`; it does not resolve HEAD for those
+records. It verifies OpenTimestamps anchors using a local Bitcoin Core node or
+agreement between Blockstream and mempool.space. It never needs the GAMI
+application or registry to validate a supplied GPR.
 
 ## Install and run
 
+For a standalone release, extract the archive and open a terminal in its folder.
+Run `.\gami-verify.exe --help` on Windows, or `./gami-verify --help` on Linux/macOS.
+No separate Node.js or npm installation is required. Public download availability
+depends on completion of the platform signing and acceptance gates.
+
+The next release renames the executable from `gami` to `gami-verify`. Update any
+scripts that invoke the old command. The npm package name stays `@authenticmemory/gami`.
+
+For npm installation:
+
 ```sh
 npm install --global @authenticmemory/gami
-gami --help
-gami version --json
-gami inspect ./first.gpr.json ./second.gpr.json
-gami inspect ./record.gpr.json --json
-gami verify ./document.pdf ./record.gpr.json
-gami verify ./document.pdf ./record.gpr.json --did-evidence ./institution.did.json
-gami verify ./document.pdf ./record.gpr.json --bitcoin-source core
-gami verify ./document.pdf ./record.gpr.json --bitcoin-source public
-gami verify ./document.pdf ./record.gpr.json --offline
-gami verify ./document.pdf ./record.gpr.json --json
+gami-verify --help
+gami-verify version --json
+gami-verify inspect ./first.gpr.json ./second.gpr.json
+gami-verify inspect ./record.gpr.json --json
+gami-verify verify ./document.pdf ./record.gpr.json
+gami-verify verify ./document.pdf ./record.gpr.json --did-evidence ./institution.did.json
+gami-verify verify ./document.pdf ./record.gpr.json --bitcoin-source core
+gami-verify verify ./document.pdf ./record.gpr.json --bitcoin-source public
+gami-verify verify ./document.pdf ./record.gpr.json --offline
+gami-verify verify ./document.pdf ./record.gpr.json --json
+gami-verify verify ./placeholder-record.gpr.json
 ```
 
 During development:
@@ -39,7 +54,7 @@ pnpm build
 
 ## Commands
 
-### `gami inspect <gpr..>`
+### `gami-verify inspect <gpr..>`
 
 Parses a GPR JSON file and validates the frozen GPR v1 envelope and field
 encodings. This is structural validation only; a structurally valid record may
@@ -50,18 +65,26 @@ Options:
 
 - `--json`: emit one versioned JSON object per input as newline-delimited JSON.
 
-### `gami verify <document> <gpr>`
+### `gami-verify verify <document> <gpr>`
 
 Streams and hashes the local document, compares it with `subject.file_hash`,
 reconstructs the deployed v1 signing payload and any batch Merkle path, and
 verifies the raw Ed25519 or WebAuthn Ed25519 signature.
+
+### `gami-verify verify <gpr>`
+
+Verifies a GPR when no original file is available. The document hash check is
+reported as skipped; signature, DID authorization, and timestamp checks still
+run.
 
 Options:
 
 - `--public-key <hex>`: override the embedded 32-byte Ed25519 key; the result
   reports the key source as `overridden`.
 - `--did-evidence <path>`: use a caller-supplied current `did:web` document.
-  Without this option, the CLI resolves the document directly from `proof.key_id`.
+  Without this option, the CLI resolves `did:web` documents directly from
+  `proof.key_id`. For `did:webvh`, the CLI fetches `did.jsonl` and resolves the
+  exact `?versionId=` in `proof.key_id`, never HEAD.
 - `--bitcoin-source <auto|core|public|none>`: `auto` tries local Bitcoin Core and
   then requires Blockstream and mempool.space to agree; default `auto`.
 - `--bitcoin-cli <path>`: path to `bitcoin-cli` when it is not on `PATH`.
@@ -89,9 +112,11 @@ are documented in [docs/STANDALONE_VERIFIER.md](docs/STANDALONE_VERIFIER.md).
 ## Security
 
 Current `did:web` resolution proves current authorization, not authorization at
-the historical signing time. Native `did:webvh` history remains pending. Public
-Bitcoin verification reveals the requested block height and the user's IP address
-to both providers; local Bitcoin Core is the stronger and more private source.
+the historical signing time. `did:webvh` records must carry `?versionId=` in
+`proof.key_id`; the verifier resolves that historical DID log version and reports
+the signature key as active or archived. Public Bitcoin verification reveals the
+requested block height and the user's IP address to both providers; local Bitcoin
+Core is the stronger and more private source.
 
 Every JSON result includes the package version, Node.js version, and supported
 Bitcoin sources. Releases are tested from the packed npm tarball and publish
