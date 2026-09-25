@@ -8,6 +8,10 @@ End users do not install Node.js, npm or project dependencies.
 
 Use Node 22 (CI pins 22.23.3) and pnpm 10.13.1:
 
+Windows builds also require the Windows SDK's SignTool to remove the original
+Node signature before embedding the verifier. The build finds installed SDK
+versions automatically; set `SIGNTOOL_PATH` for a custom installation.
+
 ```sh
 pnpm install --frozen-lockfile
 pnpm compile
