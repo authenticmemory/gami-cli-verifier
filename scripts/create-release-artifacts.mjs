@@ -58,7 +58,7 @@ const sbom = {
         left.purl.localeCompare(right.purl),
     ),
 };
-const sbomPath = resolve(output, "gami.cdx.json");
+const sbomPath = resolve(output, "gami-verify.cdx.json");
 writeFileSync(sbomPath, `${JSON.stringify(sbom, null, 2)}\n`);
 
 const files = [tarball, sbomPath];

@@ -4,7 +4,7 @@
     "description": "Independent command-line verifier for GAMI Proof Records.",
     "keywords": [
         "archives",
-        "gami",
+        "gami-verify",
         "opentimestamps",
         "provenance",
         "verification"
@@ -18,7 +18,7 @@
         "url": "git+https://github.com/authenticmemory/gami-cli-verifier.git"
     },
     "bin": {
-        "gami": "./bin/run"
+        "gami-verify": "./bin/run"
     },
     "directories": {
         "lib": "src",
@@ -34,6 +34,9 @@
     },
     "scripts": {
         "build": "tsup-node",
+        "build:standalone": "node scripts/build-standalone.mjs",
+        "test:standalone": "node scripts/test-standalone.mjs",
+        "package:standalone": "node scripts/package-standalone.mjs",
         "build:watch": "tsup-node --watch",
         "clean": "rimraf dist",
         "commit": "cz",
@@ -56,6 +59,7 @@
     "dependencies": {
         "@otskit/core": "0.2.0",
         "consola": "3.4.2",
+        "didwebvh-ts": "2.8.0",
         "dotenv": "17.4.2",
         "json-canonicalize": "2.0.0",
         "picocolors": "1.1.1",
@@ -73,11 +77,13 @@
         "@types/yargs": "^17.0.35",
         "commitizen": "^4.3.2",
         "cz-conventional-changelog": "^3.3.0",
+        "esbuild": "0.25.12",
         "husky": "^9.1.7",
         "jest": "^30.4.2",
         "jscpd": "^5.0.15",
         "oxfmt": "^0.63.0",
         "oxlint": "^1.78.0",
+        "postject": "1.0.0-alpha.6",
         "rimraf": "^6.1.3",
         "semantic-release": "^25.0.9",
         "ts-jest": "^29.4.12",

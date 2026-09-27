@@ -30,8 +30,9 @@ export interface CommandResult {
         webauthn_user_verified?: boolean;
         did?: string;
         did_key_id?: string;
-        did_evidence_source?: "none" | "provided-current" | "resolved-current";
+        did_evidence_source?: "none" | "provided-current" | "resolved-current" | "resolved-history";
         did_authorization?: "passed" | "failed" | "indeterminate";
+        signature_key_status?: "active" | "archived";
         timestamp_document_hash?: string;
         timestamp_ots_leaf?: string;
         timestamp_state?: "missing" | "pending" | "attested" | "verified" | "failed";

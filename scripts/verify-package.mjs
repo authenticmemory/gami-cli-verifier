@@ -25,7 +25,8 @@ for (const [name, range] of Object.entries(packageJson.dependencies)) {
     if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(range))
         throw new Error(`runtime dependency ${name} is not exactly pinned: ${range}`);
 }
-if (packageJson.bin?.gami !== "./bin/run") throw new Error("package exposes an unexpected CLI");
+if (packageJson.bin?.["gami-verify"] !== "./bin/run")
+    throw new Error("package exposes an unexpected CLI");
 console.log(
     `Package check passed: ${report.filename} (${report.size} bytes, ${paths.length} files)`,
 );

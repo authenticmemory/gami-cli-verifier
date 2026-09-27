@@ -54,5 +54,5 @@ jobs:
             - run: pnpm package:check
             - run: mkdir package-test && npm pack --pack-destination package-test
             - run: npm install --global ./package-test/*.tgz
-            - run: gami version --json
-            - run: gami --help
+            - run: gami-verify version --json
+            - run: gami-verify --help

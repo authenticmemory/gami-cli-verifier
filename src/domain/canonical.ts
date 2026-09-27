@@ -6,7 +6,8 @@ import type { Gpr } from "./gpr";
  * absent: they are bound by the WebAuthn challenge and Merkle inclusion path.
  */
 export function signingObject(gpr: Gpr): Record<string, unknown> {
-    const subject: Record<string, unknown> = { file_hash: gpr.subject.file_hash };
+    const subject: Record<string, unknown> = {};
+    if (gpr.subject.file_hash) subject.file_hash = gpr.subject.file_hash;
     if (gpr.subject.filename) subject.filename = gpr.subject.filename;
     if (gpr.subject.metadata && Object.keys(gpr.subject.metadata).length > 0) {
         subject.metadata = gpr.subject.metadata;
@@ -35,7 +36,8 @@ export function canonicalForSigning(gpr: Gpr): string {
 
 /** Rebuild the deployed v1 timestamp payload: the signed GPR without proof.timestamp. */
 export function timestampObject(gpr: Gpr): Record<string, unknown> {
-    const subject: Record<string, unknown> = { file_hash: gpr.subject.file_hash };
+    const subject: Record<string, unknown> = {};
+    if (gpr.subject.file_hash) subject.file_hash = gpr.subject.file_hash;
     if (gpr.subject.filename) subject.filename = gpr.subject.filename;
     if (gpr.subject.metadata && Object.keys(gpr.subject.metadata).length > 0)
         subject.metadata = gpr.subject.metadata;

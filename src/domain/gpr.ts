@@ -32,7 +32,7 @@ export interface Gpr {
     type: "gami-proof";
     schema: "v1";
     id: string;
-    subject: { filename?: string; file_hash: string; metadata?: Record<string, string> };
+    subject: { filename?: string; file_hash?: string; metadata?: Record<string, string> };
     proof: GprProof;
     parent: string | null;
 }
@@ -220,7 +220,7 @@ export function validateGpr(value: unknown): GprValidation {
         exactKeys(value.subject, ["filename", "file_hash", "metadata"], "$.subject", issues);
         optionalString(value.subject, "filename", "$.subject", issues);
         checkPattern(
-            requiredString(value.subject, "file_hash", "$.subject", issues),
+            optionalString(value.subject, "file_hash", "$.subject", issues),
             SHA256,
             "$.subject.file_hash",
             "must use sha256:<64 lowercase hex> format",

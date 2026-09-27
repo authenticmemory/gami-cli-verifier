@@ -137,4 +137,35 @@ describe("authorizeDidKey", () => {
             message: expect.stringContaining("history"),
         });
     });
+
+    it("authorizes a did:webvh key only after resolving the pinned history version", () => {
+        const scid = "QmYwAPJzv5CZsnAzt8auVZRnGi2C19h1QSpL6Y6N7RZ6Z7";
+        const didWebvh = `did:webvh:${scid}:archive.example`;
+        const keyFragment = "Nm8goDK4";
+        const keyId = `${didWebvh}?versionId=1-${"a".repeat(64)}#${keyFragment}`;
+        const document = {
+            id: didWebvh,
+            assertionMethod: [
+                {
+                    id: `#${keyFragment}`,
+                    type: "JsonWebKey2020",
+                    controller: didWebvh,
+                    publicKeyJwk: {
+                        kty: "OKP",
+                        crv: "Ed25519",
+                        x: Buffer.from(keyHex, "hex").toString("base64url"),
+                    },
+                },
+            ],
+        };
+        expect(
+            authorizeDidKey(document, keyId, keyHex, undefined, "resolved-history", "archived"),
+        ).toMatchObject({
+            status: "passed",
+            did: didWebvh,
+            keyId,
+            signatureKeyStatus: "archived",
+            message: expect.stringContaining(`did:webvh:${scid}:archive.example#${keyFragment}`),
+        });
+    });
 });

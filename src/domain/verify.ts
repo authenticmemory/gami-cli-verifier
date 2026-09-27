@@ -10,13 +10,14 @@ export interface LocalVerifyOptions {
     publicKeyHex?: string;
     didDocument?: unknown;
     bitcoinEvidence?: BitcoinBlockEvidence;
-    didEvidenceSource?: "provided-current" | "resolved-current";
+    didEvidenceSource?: "provided-current" | "resolved-current" | "resolved-history";
+    signatureKeyStatus?: "active" | "archived";
     didResolutionWarning?: string;
     bitcoinResolutionWarning?: string;
 }
 
 export async function verifyLocal(
-    documentHash: string,
+    documentHash: string | undefined,
     gpr: Gpr,
     options: LocalVerifyOptions = {},
 ): Promise<CommandResult> {
@@ -28,13 +29,16 @@ export async function verifyLocal(
         },
     ];
 
-    const hashMatches = documentHash === gpr.subject.file_hash;
+    const hashMatches = documentHash !== undefined && documentHash === gpr.subject.file_hash;
     checks.push({
         name: "document_hash",
-        status: hashMatches ? "passed" : "failed",
-        message: hashMatches
-            ? "Document SHA-256 matches subject.file_hash"
-            : `Document SHA-256 does not match subject.file_hash`,
+        status: documentHash === undefined ? "skipped" : hashMatches ? "passed" : "failed",
+        message:
+            documentHash === undefined
+                ? "No original document supplied; file hash check was skipped"
+                : hashMatches
+                  ? "Document SHA-256 matches subject.file_hash"
+                  : `Document SHA-256 does not match subject.file_hash`,
     });
 
     const authorization = authorizeDidKey(
@@ -43,6 +47,7 @@ export async function verifyLocal(
         gpr.proof.public_key_hex,
         options.publicKeyHex,
         options.didEvidenceSource,
+        options.signatureKeyStatus,
     );
     const verificationKey = options.publicKeyHex ?? authorization.publicKeyHex;
     const verificationKeySource = options.publicKeyHex
@@ -94,7 +99,7 @@ export async function verifyLocal(
     });
 
     const failed =
-        !hashMatches ||
+        (documentHash !== undefined && !hashMatches) ||
         signatureFailed ||
         authorization.status === "failed" ||
         timestampResult.status === "failed";
@@ -119,6 +124,7 @@ export async function verifyLocal(
             did_key_id: authorization.keyId,
             did_evidence_source: authorization.evidenceSource,
             did_authorization: authorization.status,
+            signature_key_status: authorization.signatureKeyStatus,
             timestamp_document_hash: timestampResult.canonicalHash,
             timestamp_ots_leaf: timestampResult.otsLeaf,
             timestamp_state: timestampResult.status,

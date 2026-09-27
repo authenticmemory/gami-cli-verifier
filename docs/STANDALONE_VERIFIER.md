@@ -1,13 +1,16 @@
-# Standalone GAMI Verifier
+# Standalone GAMI Verify
 
 ## Decision
 
-For this project, **standalone** means installable through npm, requiring Node.js
-20 or newer, and running without the GAMI web application, database, or API.
+For this project, **standalone** means running without the GAMI web application,
+database, or API. Distribution supports both npm (Node.js 20 or newer) and portable
+executables with an embedded Node.js runtime. Portable users need neither npm nor
+Node.js installed. See [portable releases](PORTABLE-RELEASES.md) for platform status,
+signing setup and acceptance gates.
 
-The executable is `gami`. The package may expose only that command; names such as
-`gami-verify` and `gv` are deliberately avoided so the public interface remains
-simple and can grow beyond one subcommand.
+The executable is `gami-verify`, distinct from `gami-hash` and `gami-local`.
+The npm package remains `@authenticmemory/gami`; updating it installs the new
+command name. The previous `gami` command is no longer provided.
 
 ## Purpose
 
@@ -71,11 +74,12 @@ The frozen production invariants are:
 The target verification interface is:
 
 ```text
-gami inspect record.gpr.json
-gami verify document.pdf record.gpr.json
-gami verify document.pdf record.gpr.json --offline
-gami verify document.pdf record.gpr.json --strict
-gami verify document.pdf record.gpr.json --json
+gami-verify inspect record.gpr.json
+gami-verify verify document.pdf record.gpr.json
+gami-verify verify placeholder-record.gpr.json
+gami-verify verify document.pdf record.gpr.json --offline
+gami-verify verify document.pdf record.gpr.json --strict
+gami-verify verify document.pdf record.gpr.json --json
 ```
 
 `--offline` forbids network access and reports missing external evidence as
@@ -98,10 +102,10 @@ reported in output and must never masquerade as live institutional authorization
 ### Phase 1 — contracts and format safety
 
 - Replace template branding, package metadata, and commands.
-- Establish `gami` as the sole executable.
+- Establish `gami-verify` as the sole executable.
 - Document the trust model, output contract, and exit codes.
 - Define the strict supported GPR v1 shape and encoding constraints.
-- Implement `gami inspect` without making cryptographic claims.
+- Implement `gami-verify inspect` without making cryptographic claims.
 - Parse standards-conforming `did:web` and `did:webvh` signing-key identifiers.
 - Report the deployed record lifecycle: unsigned, signed, stamped, or upgraded.
 - Add valid and adversarial fixtures with meaningful automated tests.
@@ -119,16 +123,20 @@ the CLI never upgrades a partial result into complete GAMI proof validity.
 
 ### Phase 3 — identity verification
 
-- Implemented: accept a caller-supplied current `did:web` document or resolve it
-  directly over HTTPS from `proof.key_id`, without trusting a registry result.
+- Implemented: accept a caller-supplied current `did:web` document or resolve
+  identity evidence directly over HTTPS from `proof.key_id`, without trusting a
+  registry result.
 - Implemented in Phase 3A: require the exact GPR key under `assertionMethod`,
   validate its controller, decode Ed25519 Multikey or JWK material, and bind it
   to the key that verifies the GPR signature.
 - Implemented: lock the Flossenbürg `did:web` document and its deployed GPR as a
   production conformance pair. The fixture was supplied directly before the DID
   document was deployed at its HTTPS location.
-- Pending Phase 3B: validate native `did:webvh` history and historical key
-  authorization using a real deployment log.
+- Implemented in Phase 3B: validate native `did:webvh` history with
+  `didwebvh-ts` 2.8.0 and authorize the signing key from the exact
+  `?versionId=` carried in `proof.key_id`. The verifier refuses HEAD resolution
+  for `did:webvh` key IDs because current DID documents can legitimately remove
+  archived signing keys.
 
 ### Phase 4 — independent Bitcoin verification
 
@@ -151,7 +159,7 @@ the CLI never upgrades a partial result into complete GAMI proof validity.
 - Implemented: publish npm provenance, SHA-256 checksums, a CycloneDX SBOM, and
   GitHub-signed build attestations from immutable, SHA-pinned workflow actions.
 - Implemented: disclose the verifier version and supported Bitcoin sources
-  through `gami version` and every JSON verification result.
+  through `gami-verify version` and every JSON verification result.
 - Documented: release operation and independent artifact
   verification in `docs/RELEASING.md`.
 

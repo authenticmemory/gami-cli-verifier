@@ -5,11 +5,13 @@ export type SupportedDidMethod = "web" | "webvh";
 export interface ParsedDidKeyId {
     method: SupportedDidMethod;
     did: string;
+    didUrl: string;
     fragment: string;
     host: string;
     port?: number;
     path: string[];
     scid?: string;
+    versionId?: string;
 }
 
 const BASE58BTC = /^[1-9A-HJ-NP-Za-km-z]{46}$/;
@@ -84,18 +86,37 @@ export function parseDidKeyId(value: string): ParsedDidKeyId {
     const hashIndex = value.indexOf("#");
     if (hashIndex < 0 || hashIndex !== value.lastIndexOf("#"))
         throw new Error("DID key identifier must contain exactly one fragment");
-    const did = value.slice(0, hashIndex);
+    const didUrl = value.slice(0, hashIndex);
     const fragment = value.slice(hashIndex + 1);
     if (!fragment || !FRAGMENT_CHAR.test(fragment)) throw new Error("DID key fragment is invalid");
     decodeOnce(fragment, "DID key fragment");
-    if (did.includes("/") || did.includes("?") || did.includes("#"))
+    if (didUrl.includes("/") || didUrl.includes("#"))
         throw new Error("GAMI key identifiers must reference the DID directly");
+    const queryIndex = didUrl.indexOf("?");
+    const did = queryIndex >= 0 ? didUrl.slice(0, queryIndex) : didUrl;
+    const query = queryIndex >= 0 ? didUrl.slice(queryIndex + 1) : "";
+    let versionId: string | undefined;
+    if (query) {
+        const params = new URLSearchParams(query);
+        versionId = params.get("versionId") ?? undefined;
+        if (!versionId || params.size !== 1) {
+            throw new Error("DID URL query may only contain versionId");
+        }
+    }
 
     if (did.startsWith("did:web:")) {
+        if (versionId) throw new Error("did:web key identifiers must not use versionId");
         const segments = did.slice("did:web:".length).split(":");
         if (!segments[0]) throw new Error("did:web identifier has no domain");
         const authority = parseHost(segments[0]);
-        return { method: "web", did, fragment, ...authority, path: parsePath(segments.slice(1)) };
+        return {
+            method: "web",
+            did,
+            didUrl,
+            fragment,
+            ...authority,
+            path: parsePath(segments.slice(1)),
+        };
     }
 
     if (did.startsWith("did:webvh:")) {
@@ -106,7 +127,16 @@ export function parseDidKeyId(value: string): ParsedDidKeyId {
         const domain = segments.shift();
         if (!domain) throw new Error("did:webvh identifier has no domain");
         const authority = parseHost(domain);
-        return { method: "webvh", did, fragment, scid, ...authority, path: parsePath(segments) };
+        return {
+            method: "webvh",
+            did,
+            didUrl,
+            fragment,
+            versionId,
+            scid,
+            ...authority,
+            path: parsePath(segments),
+        };
     }
 
     throw new Error("signing key must use did:web or did:webvh");
