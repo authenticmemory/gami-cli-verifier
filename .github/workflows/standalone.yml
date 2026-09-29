@@ -137,11 +137,11 @@ jobs:
                   test "$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft)" = true || { echo 'Refusing to replace a published release'; exit 1; }
                   gh release upload "$GITHUB_REF_NAME" release/downloads/*
                   gh release edit "$GITHUB_REF_NAME" --draft=false --latest
-            - name: Trigger full Netlify site rebuild
+            - name: Request website deployment
               env:
-                  NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+                  GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
               shell: bash
               run: |
                   set -euo pipefail
-                  test -n "$NETLIFY_BUILD_HOOK" || { echo 'Set NETLIFY_BUILD_HOOK to enable automatic website deployment'; exit 1; }
-                  curl --fail --silent --show-error --retry 3 --request POST "$NETLIFY_BUILD_HOOK" --output /dev/null
+                  test -n "$GH_TOKEN" || { echo 'Set WEBSITE_DISPATCH_TOKEN in repository secrets'; exit 1; }
+                  gh api --method POST repos/authenticmemory/AuthenticMemory_Website/dispatches -f event_type=tool-release

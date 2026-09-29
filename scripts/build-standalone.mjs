@@ -49,15 +49,28 @@ if (process.platform === "win32") {
     // Leaving it in place can produce an executable that runs but cannot be signed.
     let signtool = process.env.SIGNTOOL_PATH;
     if (!signtool) {
-        const sdk = resolve(process.env["ProgramFiles(x86)"] || "C:/Program Files (x86)", "Windows Kits/10/bin");
-        const versions = (await readdir(sdk)).filter((name) => /^10\./.test(name))
+        const sdk = resolve(
+            process.env["ProgramFiles(x86)"] || "C:/Program Files (x86)",
+            "Windows Kits/10/bin",
+        );
+        const versions = (await readdir(sdk))
+            .filter((name) => /^10\./.test(name))
             .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
         for (const version of versions) {
             const candidate = resolve(sdk, version, process.arch, "signtool.exe");
-            try { await access(candidate); signtool = candidate; break; } catch { /* Try another SDK. */ }
+            try {
+                await access(candidate);
+                signtool = candidate;
+                break;
+            } catch {
+                /* Try another SDK. */
+            }
         }
     }
-    if (!signtool) throw new Error("Install the Windows SDK or set SIGNTOOL_PATH before building the Windows executable");
+    if (!signtool)
+        throw new Error(
+            "Install the Windows SDK or set SIGNTOOL_PATH before building the Windows executable",
+        );
     execFileSync(signtool, ["remove", "/s", executable], { stdio: "inherit" });
 }
 if (process.platform === "darwin") execFileSync("codesign", ["--remove-signature", executable]);

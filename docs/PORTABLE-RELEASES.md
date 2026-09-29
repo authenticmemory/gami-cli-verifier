@@ -96,13 +96,16 @@ repository signature.
    the standalone workflow publishes Windows/Linux files and the download
    manifest to GitHub Releases. The npm workflow attaches its separate artifacts.
    macOS previews never enter the published download manifest.
-5. Configure the repository secret `NETLIFY_BUILD_HOOK` for the website's
-   production branch. The workflow triggers it after release publication.
-   The Netlify build verifies/downloads the release assets and enables links on
+5. Configure `WEBSITE_DISPATCH_TOKEN` as a repository secret: a fine-grained
+   GitHub token with Contents: Read and write on `authenticmemory/AuthenticMemory_Website`.
+   After publication the workflow sends `repository_dispatch` (`tool-release`).
+   The website's GitHub Actions build verifies/downloads the assets and enables links on
    `/tools` in the same atomic deployment. Follow
    `AuthenticMemory_Website/RELEASE-DOWNLOADS.md` for one-time setup.
 6. Confirm the Netlify deployment succeeded and test the public download links.
-   A successful build-hook request alone does not prove the website deployed.
+   A successful dispatch alone does not prove the website deployed. Merge the
+   website listener into its default branch (`master`) first. To retry deployment,
+   run the website's Deploy workflow manually on master; do not recreate a release.
    Test-tag artifacts expire after 30 days; stable GitHub release assets persist.
 
 ## User installation and verification
