@@ -52,6 +52,51 @@ function decodeBase58(value: string): Uint8Array {
     return Uint8Array.from(bytes, (_, index) => bytes[bytes.length - 1 - index]!);
 }
 
+// TEMPORARY legacy rule, mirroring the hosted GAMI verifier (gami-app
+// src/lib/did-resolve.ts isAuthorizedForAssertion). did:web documents the GAMI
+// portal generated before 2026-06-30 declare no assertionMethod and carry
+// Ed25519VerificationKey2020 keys as bare publicKeyHex, listed under
+// authentication. For exactly that shape, the record's key counts as authorized
+// when the verificationMethod with that id holds exactly the record's embedded
+// key. Remove it, with its tests, once the remaining institutions re-publish
+// their documents from the portal.
+function isLegacyDocument(document: JsonObject): boolean {
+    return document.assertionMethod === undefined || document.assertionMethod === null;
+}
+
+function decodeLegacyKey(method: JsonObject): Uint8Array {
+    if (
+        method.type !== "Ed25519VerificationKey2020" ||
+        method.publicKeyMultibase !== undefined ||
+        method.publicKeyJwk !== undefined
+    )
+        throw new Error(
+            "the legacy rule accepts only an Ed25519VerificationKey2020 key given as bare publicKeyHex",
+        );
+    if (typeof method.publicKeyHex !== "string" || !/^[0-9a-f]{64}$/i.test(method.publicKeyHex))
+        throw new Error("publicKeyHex must contain exactly 32 bytes of hexadecimal data");
+    return hexToBytes(method.publicKeyHex);
+}
+
+function findLegacyMethod(
+    document: JsonObject,
+    did: string,
+    keyId: string,
+): JsonObject | undefined {
+    const matches = (Array.isArray(document.verificationMethod) ? document.verificationMethod : [])
+        .filter(isObject)
+        .filter(
+            (method) => typeof method.id === "string" && resolveDidUrl(method.id, did) === keyId,
+        );
+    if (matches.length > 1)
+        throw new Error(`${keyId} must have exactly one verificationMethod definition`);
+    const authentication = Array.isArray(document.authentication) ? document.authentication : [];
+    const listed = authentication.some(
+        (entry) => typeof entry === "string" && resolveDidUrl(entry, did) === keyId,
+    );
+    return listed ? matches[0] : undefined;
+}
+
 function decodeVerificationKey(method: JsonObject): Uint8Array {
     const finish = (key: Uint8Array): Uint8Array => {
         if (method.publicKeyHex !== undefined) {
@@ -182,9 +227,21 @@ export function authorizeDidKey(
             evidenceSource,
         };
     }
+    const legacy = parsed.method === "web" && isLegacyDocument(document);
+    if (legacy && !embeddedPublicKeyHex && !overriddenPublicKeyHex) {
+        return {
+            status: "failed",
+            message: `${documentKeyId} cannot be authorized: the DID document declares no assertionMethod, and the legacy rule needs the record's embedded key`,
+            did: parsed.did,
+            keyId,
+            evidenceSource,
+        };
+    }
     let method: JsonObject | undefined;
     try {
-        method = findAuthorizedMethod(document, parsed.did, documentKeyId);
+        method = legacy
+            ? findLegacyMethod(document, parsed.did, documentKeyId)
+            : findAuthorizedMethod(document, parsed.did, documentKeyId);
     } catch (error) {
         return {
             status: "failed",
@@ -197,7 +254,9 @@ export function authorizeDidKey(
     if (!method) {
         return {
             status: "failed",
-            message: `${documentKeyId} is not authorized by assertionMethod`,
+            message: legacy
+                ? `${documentKeyId} is not listed under authentication in the DID document`
+                : `${documentKeyId} is not authorized by assertionMethod`,
             did: parsed.did,
             keyId,
             evidenceSource,
@@ -219,7 +278,7 @@ export function authorizeDidKey(
 
     let key: Uint8Array;
     try {
-        key = decodeVerificationKey(method);
+        key = legacy ? decodeLegacyKey(method) : decodeVerificationKey(method);
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unsupported DID verification key";
         return {
@@ -249,10 +308,11 @@ export function authorizeDidKey(
     }
     return {
         status: "passed",
-        message:
-            evidenceSource === "resolved-history"
-                ? `${documentKeyId} is authorized for assertion by the resolved did:webvh history at ${parsed.versionId}`
-                : `${documentKeyId} is authorized for assertion by the ${evidenceSource === "resolved-current" ? "live" : "supplied"} current did:web document`,
+        message: legacy
+            ? `${documentKeyId} is accepted under the temporary legacy rule: the ${evidenceSource === "resolved-current" ? "live" : "supplied"} did:web document declares no assertionMethod, and its listed key matches the record's key. The institution should re-publish its DID document`
+            : evidenceSource === "resolved-history"
+              ? `${documentKeyId} is authorized for assertion by the resolved did:webvh history at ${parsed.versionId}`
+              : `${documentKeyId} is authorized for assertion by the ${evidenceSource === "resolved-current" ? "live" : "supplied"} current did:web document`,
         did: parsed.did,
         keyId,
         publicKeyHex: bytesToHex(key),
