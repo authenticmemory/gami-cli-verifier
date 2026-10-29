@@ -138,11 +138,18 @@ for (const [network, prefix] of [
 ] as const)
     NON_PUBLIC.addSubnet(network, prefix, "ipv4");
 for (const [network, prefix] of [
-    ["::", 128],
+    ["::", 96],
     ["::1", 128],
     ["fc00::", 7],
     ["fe80::", 10],
     ["ff00::", 8],
+    ["100::", 64],
+    // Ranges that embed an IPv4 address (IPv4-compatible above, NAT64, 6to4, Teredo): routed
+    // through a translator, they reach whatever IPv4 address they carry, private ones included.
+    ["64:ff9b::", 96],
+    ["64:ff9b:1::", 48],
+    ["2002::", 16],
+    ["2001::", 32],
 ] as const)
     NON_PUBLIC.addSubnet(network, prefix, "ipv6");
 
@@ -178,6 +185,12 @@ function publicOnlyLookup(
 
 export const fetchHop: FetchHop = (url, options, signal) =>
     new Promise<HopResult>((resolve, reject) => {
+        // Node does not call `lookup` for an IP-literal host, so check one here. The URL parser
+        // turns spellings like `0x7f.0.0.1` into one; the DID parser refuses those, and this is
+        // the second line in case another caller does not.
+        const host = new URL(url).hostname.replace(/^\[|\]$/g, "");
+        if (isIP(host) && !isPublicAddress(host))
+            return reject(new Error(`${host} is not a public address`));
         const fail = (error: unknown) =>
             reject(signal.aborted ? new Error("DID server did not respond in time") : error);
         const req = request(

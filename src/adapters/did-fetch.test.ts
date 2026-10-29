@@ -2,6 +2,7 @@ import { describe, expect, it } from "@jest/globals";
 import {
     RedirectRefusedError,
     fetchDidFile,
+    fetchHop,
     isPublicAddress,
     redirectTarget,
     type FetchHop,
@@ -111,8 +112,26 @@ describe("DID file fetching", () => {
             "fe80::1",
             "fd12::1",
             "::ffff:127.0.0.1",
+            "::7f00:1",
+            "64:ff9b::7f00:1",
+            "64:ff9b:1::1",
+            "2002:7f00:1::1",
+            "2001:0:4136:e378::1",
+            "100::1",
             "not-an-ip",
         ])
             expect(isPublicAddress(address)).toBe(false);
+    });
+
+    it("checks an IP-literal host before connecting, since Node skips the DNS lookup for it", async () => {
+        for (const url of [
+            "https://127.0.0.1/did.jsonl",
+            "https://0x7f.0.0.1/did.jsonl",
+            "https://[::1]/did.jsonl",
+        ]) {
+            await expect(fetchHop(url, options(false), AbortSignal.timeout(2_000))).rejects.toThrow(
+                /not a public address/,
+            );
+        }
     });
 });
