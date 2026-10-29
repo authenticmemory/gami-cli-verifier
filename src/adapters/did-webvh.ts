@@ -2,6 +2,8 @@ import { createPublicKey, verify as verifyWithNode } from "node:crypto";
 import { isIP } from "node:net";
 import { resolveDIDFromLog, type DIDLog, type Verifier } from "didwebvh-ts";
 import { parseDidKeyId } from "../domain/did";
+import { fetchDidFile } from "./did-fetch";
+import type { DidResolveOptions } from "./did-web";
 
 const MAX_DID_LOG_BYTES = 2 * 1024 * 1024;
 const DID_TIMEOUT_MS = 15_000;
@@ -9,6 +11,8 @@ const DID_TIMEOUT_MS = 15_000;
 export interface ResolvedDidWebvhDocument {
     document: unknown;
     url: string;
+    /** Where the log was served; differs from `url` only after a followed redirect. */
+    servedFrom: string;
     versionId: string;
     latestVersionId: string;
     signatureKeyStatus: "active" | "archived";
@@ -51,7 +55,7 @@ export function didWebvhLogUrl(keyId: string): string {
 
 export async function resolveDidWebvhDocument(
     keyId: string,
-    fetcher: typeof fetch = fetch,
+    options: DidResolveOptions = {},
 ): Promise<ResolvedDidWebvhDocument> {
     const parsed = parseDidKeyId(keyId);
     if (parsed.method !== "webvh") throw new Error("not a did:webvh key identifier");
@@ -62,18 +66,17 @@ export async function resolveDidWebvhDocument(
     }
 
     const url = didWebvhLogUrl(keyId);
-    const response = await fetcher(url, {
-        headers: { accept: "application/jsonl, application/json-seq, text/plain" },
-        redirect: "error",
-        signal: AbortSignal.timeout(DID_TIMEOUT_MS),
-    });
-    if (!response.ok) throw new Error(`DID log server returned HTTP ${response.status}`);
-    const declaredLength = Number(response.headers.get("content-length"));
-    if (Number.isFinite(declaredLength) && declaredLength > MAX_DID_LOG_BYTES)
-        throw new Error("DID log exceeds the size limit");
-    const text = await response.text();
-    if (Buffer.byteLength(text) > MAX_DID_LOG_BYTES)
-        throw new Error("DID log exceeds the size limit");
+    const fetched = await fetchDidFile(
+        url,
+        {
+            accept: "application/jsonl, application/json-seq, text/plain",
+            timeoutMs: DID_TIMEOUT_MS,
+            maxBytes: MAX_DID_LOG_BYTES,
+            followRedirects: options.followRedirects ?? false,
+        },
+        options.hop,
+    );
+    const text = fetched.text;
 
     const log = parseDidLog(text);
     const latestVersionId = String(log.at(-1)?.versionId ?? "");
@@ -92,6 +95,7 @@ export async function resolveDidWebvhDocument(
     return {
         document: resolved.doc,
         url,
+        servedFrom: fetched.url,
         versionId: parsed.versionId,
         latestVersionId,
         signatureKeyStatus: parsed.versionId === latestVersionId ? "active" : "archived",

@@ -88,6 +88,12 @@ Options:
 - `--bitcoin-source <auto|core|public|none>`: `auto` tries local Bitcoin Core and
   then requires Blockstream and mempool.space to agree; default `auto`.
 - `--bitcoin-cli <path>`: path to `bitcoin-cli` when it is not on `PATH`.
+- `--follow-redirects`: follow a redirect between the DID host and its `www.`
+  alias, for example from `example.org` to `www.example.org`. The path must stay
+  the same, every hop must use HTTPS, and every hop must resolve to a public
+  address. Other redirects are refused. Without this option, the CLI refuses
+  all redirects, as did:webvh v1.0 requires. When the CLI follows a redirect,
+  the identity check reports it.
 - `--offline`: disable all DID and Bitcoin network access. Supplied DID evidence
   is still checked, but Bitcoin chain membership remains indeterminate.
 - `--json`: emit the versioned machine-readable result.

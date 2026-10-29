@@ -21,6 +21,7 @@ interface VerifyArguments {
     bitcoinSource: BitcoinSource;
     bitcoinCli?: string;
     offline: boolean;
+    followRedirects: boolean;
 }
 
 export const command = "verify <first> [second]";
@@ -59,6 +60,12 @@ export function builder(yargs: Argv): Argv<VerifyArguments> {
             type: "boolean",
             default: false,
             describe: "Disable DID and Bitcoin network access",
+        })
+        .option("follow-redirects", {
+            type: "boolean",
+            default: false,
+            describe:
+                "Follow a redirect between a DID host and its www. alias (same path, HTTPS, public addresses only)",
         })
         .option("json", {
             type: "boolean",
@@ -101,6 +108,7 @@ export async function handler(argv: ArgumentsCamelCase<VerifyArguments>): Promis
             | "resolved-history"
             | undefined;
         let didResolutionWarning: string | undefined;
+        let didResolutionNote: string | undefined;
         let signatureKeyStatus: "active" | "archived" | undefined;
         if (argv.didEvidence) {
             didDocument = await readJsonFile(argv.didEvidence, "DID evidence");
@@ -108,17 +116,29 @@ export async function handler(argv: ArgumentsCamelCase<VerifyArguments>): Promis
         } else if (!argv.offline) {
             try {
                 const parsed = parseDidKeyId(validation.value.proof.key_id);
+                const resolveOptions = { followRedirects: argv.followRedirects };
+                let resolved: { url: string; servedFrom: string };
                 if (parsed.method === "webvh") {
-                    const resolved = await resolveDidWebvhDocument(validation.value.proof.key_id);
-                    didDocument = resolved.document;
+                    const webvh = await resolveDidWebvhDocument(
+                        validation.value.proof.key_id,
+                        resolveOptions,
+                    );
+                    didDocument = webvh.document;
                     didEvidenceSource = "resolved-history";
-                    signatureKeyStatus = resolved.signatureKeyStatus;
+                    signatureKeyStatus = webvh.signatureKeyStatus;
+                    resolved = webvh;
                 } else {
-                    didDocument = (await resolveDidWebDocument(validation.value.proof.key_id))
-                        .document;
+                    const web = await resolveDidWebDocument(
+                        validation.value.proof.key_id,
+                        resolveOptions,
+                    );
+                    didDocument = web.document;
                     didEvidenceSource = "resolved-current";
                     signatureKeyStatus = "active";
+                    resolved = web;
                 }
+                if (resolved.servedFrom !== resolved.url)
+                    didResolutionNote = `found only through a redirect from ${resolved.url} to ${resolved.servedFrom}`;
             } catch (error) {
                 didResolutionWarning = `Live DID resolution unavailable; institutional identity is unconfirmed (${message(error)})`;
             }
@@ -150,6 +170,7 @@ export async function handler(argv: ArgumentsCamelCase<VerifyArguments>): Promis
             didDocument,
             didEvidenceSource,
             signatureKeyStatus,
+            didResolutionNote,
             didResolutionWarning:
                 argv.offline && !argv.didEvidence
                     ? "Offline mode: institutional identity was not checked"
