@@ -13,6 +13,8 @@ export interface LocalVerifyOptions {
     didEvidenceSource?: "provided-current" | "resolved-current" | "resolved-history";
     signatureKeyStatus?: "active" | "archived";
     didResolutionWarning?: string;
+    /** Appended to the identity message when resolution succeeded with a caveat. */
+    didResolutionNote?: string;
     bitcoinResolutionWarning?: string;
 }
 
@@ -82,7 +84,11 @@ export async function verifyLocal(
     checks.push({
         name: "institutional_identity",
         status: options.didDocument === undefined ? "indeterminate" : authorization.status,
-        message: options.didResolutionWarning ?? authorization.message,
+        message:
+            options.didResolutionWarning ??
+            (options.didResolutionNote
+                ? `${authorization.message} (${options.didResolutionNote})`
+                : authorization.message),
     });
     const timestampResult = verifyTimestamp(gpr, options.bitcoinEvidence);
     checks.push({
