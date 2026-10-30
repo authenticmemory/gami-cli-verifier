@@ -134,4 +134,12 @@ describe("DID file fetching", () => {
             );
         }
     });
+
+    it("refuses a host name that resolves to a private address, at connect time", async () => {
+        // localhost resolves from the hosts file, so this exercises the custom `lookup` without the
+        // network: the one piece that makes isPublicAddress an SSRF defence and not just a function.
+        await expect(
+            fetchHop("https://localhost/did.jsonl", options(false), AbortSignal.timeout(5_000)),
+        ).rejects.toThrow(/localhost resolves to a non-public address/);
+    });
 });
