@@ -23,12 +23,12 @@ No separate Node.js or npm installation is required. Public download availabilit
 depends on completion of the platform signing and acceptance gates.
 
 The next release renames the executable from `gami` to `gami-verify`. Update any
-scripts that invoke the old command. The npm package is `@authenticmemory/gami-verify`.
+scripts that invoke the old command. The npm package name stays `@authenticmemory/gami`.
 
 For npm installation:
 
 ```sh
-npm install --global @authenticmemory/gami-verify
+npm install --global @authenticmemory/gami
 gami-verify --help
 gami-verify version --json
 gami-verify inspect ./first.gpr.json ./second.gpr.json

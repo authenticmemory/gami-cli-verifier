@@ -1,6 +1,6 @@
 {
-    "name": "@authenticmemory/gami-verify",
-    "version": "0.4.2",
+    "name": "@authenticmemory/gami",
+    "version": "0.4.3",
     "description": "Independent command-line verifier for GAMI Proof Records.",
     "keywords": [
         "archives",
@@ -9,13 +9,13 @@
         "provenance",
         "verification"
     ],
-    "homepage": "https://github.com/authenticmemory/gami-verify#readme",
-    "bugs": "https://github.com/authenticmemory/gami-verify/issues",
+    "homepage": "https://github.com/authenticmemory/gami-cli-verifier#readme",
+    "bugs": "https://github.com/authenticmemory/gami-cli-verifier/issues",
     "license": "MIT",
     "author": "Chijioke Ugwuanyi <cugwuanyi@authenticmemory.org>",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/authenticmemory/gami-verify.git"
+        "url": "git+https://github.com/authenticmemory/gami-cli-verifier.git"
     },
     "bin": {
         "gami-verify": "./bin/run"
