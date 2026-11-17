@@ -42,6 +42,86 @@ function base58(bytes: Uint8Array): string {
     return output;
 }
 
+// Shape of the did:web documents the GAMI portal generated before 2026-06-30
+// (some institutions still host one): no assertionMethod, bare publicKeyHex.
+function legacyDocument(hex = keyHex): Record<string, unknown> {
+    return {
+        "@context": ["https://www.w3.org/ns/did/v1"],
+        id: did,
+        verificationMethod: [
+            { id: keyId, type: "Ed25519VerificationKey2020", controller: did, publicKeyHex: hex },
+        ],
+        authentication: [keyId],
+    };
+}
+
+describe("authorizeDidKey temporary legacy rule", () => {
+    it("accepts a document without assertionMethod when its listed key matches the record", () => {
+        expect(authorizeDidKey(legacyDocument(), keyId, keyHex)).toMatchObject({
+            status: "passed",
+            publicKeyHex: keyHex,
+            message: expect.stringContaining("temporary legacy rule"),
+        });
+    });
+
+    it("still rejects a legacy document whose key differs from the record's key", () => {
+        expect(authorizeDidKey(legacyDocument("00".repeat(32)), keyId, keyHex)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("embedded GPR key"),
+        });
+    });
+
+    it("needs the record's embedded key to apply the legacy rule", () => {
+        expect(authorizeDidKey(legacyDocument(), keyId)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("legacy rule needs the record's embedded key"),
+        });
+    });
+
+    it("rejects a legacy document that does not list the record's key id", () => {
+        expect(authorizeDidKey(legacyDocument(), `${did}#key-2`, keyHex)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("is not listed under authentication"),
+        });
+    });
+
+    it("rejects a legacy document whose key is not listed under authentication", () => {
+        const document = { ...legacyDocument(), authentication: [] };
+        expect(authorizeDidKey(document, keyId, keyHex)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("is not listed under authentication"),
+        });
+    });
+
+    it("accepts no other key encoding under the legacy rule", () => {
+        const document = legacyDocument();
+        const [method] = document.verificationMethod as Array<Record<string, unknown>>;
+        method!.type = "JsonWebKey2020";
+        method!.publicKeyJwk = {
+            kty: "OKP",
+            crv: "Ed25519",
+            x: Buffer.from(keyHex, "hex").toString("base64url"),
+        };
+        expect(authorizeDidKey(document, keyId, keyHex)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("accepts only an Ed25519VerificationKey2020"),
+        });
+    });
+
+    it("keeps the strict rule once a document declares assertionMethod, even an empty one", () => {
+        const document = { ...legacyDocument(), assertionMethod: [] };
+        expect(authorizeDidKey(document, keyId, keyHex)).toMatchObject({
+            status: "failed",
+            message: expect.stringContaining("not authorized by assertionMethod"),
+        });
+    });
+
+    it("does not accept a bare publicKeyHex key outside a legacy document", () => {
+        const document = { ...legacyDocument(), assertionMethod: [keyId] };
+        expect(authorizeDidKey(document, keyId, keyHex)).toMatchObject({ status: "failed" });
+    });
+});
+
 describe("authorizeDidKey", () => {
     it("authorizes the exact assertionMethod JWK and matches the GPR key", () => {
         expect(authorizeDidKey(jwkDocument(), keyId, keyHex)).toMatchObject({
