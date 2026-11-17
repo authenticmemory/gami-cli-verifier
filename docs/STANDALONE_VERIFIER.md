@@ -9,8 +9,7 @@ Node.js installed. See [portable releases](PORTABLE-RELEASES.md) for platform st
 signing setup and acceptance gates.
 
 The executable is `gami-verify`, distinct from `gami-hash` and `gami-local`.
-The npm package remains `@authenticmemory/gami`; updating it installs the new
-command name. The previous `gami` command is no longer provided.
+The npm package is `@authenticmemory/gami-verify`. The previous `gami` command is no longer provided.
 
 ## Purpose
 
@@ -180,7 +179,7 @@ Machine output is versioned independently of the package:
         }
     ],
     "verifier": {
-        "name": "@authenticmemory/gami",
+        "name": "@authenticmemory/gami-verify",
         "version": "0.2.0",
         "node": "v20.x.x",
         "bitcoin_network": "bitcoin-mainnet",
