@@ -123,14 +123,16 @@ describe("DID file fetching", () => {
             expect(isPublicAddress(address)).toBe(false);
     });
 
-    it("checks an IP-literal host before connecting, since Node skips the DNS lookup for it", async () => {
+    it("refuses every IP-literal host before connecting, since Node skips DNS lookup for it", async () => {
         for (const url of [
             "https://127.0.0.1/did.jsonl",
             "https://0x7f.0.0.1/did.jsonl",
             "https://[::1]/did.jsonl",
+            "https://93.184.215.14/did.jsonl",
+            "https://[2606:2800:21f:cb07:6820:80da:af6b:8b2c]/did.jsonl",
         ]) {
             await expect(fetchHop(url, options(false), AbortSignal.timeout(2_000))).rejects.toThrow(
-                /not a public address/,
+                /IP-literal host/,
             );
         }
     });

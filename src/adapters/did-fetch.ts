@@ -189,8 +189,7 @@ export const fetchHop: FetchHop = (url, options, signal) =>
         // turns spellings like `0x7f.0.0.1` into one; the DID parser refuses those, and this is
         // the second line in case another caller does not.
         const host = new URL(url).hostname.replace(/^\[|\]$/g, "");
-        if (isIP(host) && !isPublicAddress(host))
-            return reject(new Error(`${host} is not a public address`));
+        if (isIP(host)) return reject(new Error(`${host} is an IP-literal host`));
         const fail = (error: unknown) =>
             reject(signal.aborted ? new Error("DID server did not respond in time") : error);
         const req = request(
