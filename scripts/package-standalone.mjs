@@ -62,7 +62,7 @@ for (const [name, { directory, dep }] of packages) {
 writeFileSync(join(stage, "THIRD-PARTY-NOTICES.txt"), notices);
 writeFileSync(
     join(stage, "README.txt"),
-    `GAMI Verify ${pkg.version}\n\nNo Node.js or npm installation required.\nExtract the entire archive. Open a terminal in this folder.\n${platform === "windows" ? ".\\gami-verify.exe" : "./gami-verify"} --help\n${platform === "windows" ? ".\\gami-verify.exe" : "./gami-verify"} verify document.pdf record.gpr.json --offline --json\n\nOffline verification can return exit 2 (indeterminate) when identity or Bitcoin evidence is missing.\nExit codes: 0 passed, 1 failed, 2 indeterminate, 3 input error, 4 internal error.\n\nmacOS builds are ad-hoc signed for testing only until Developer ID signing and notarization are configured.\nLinux requires glibc (not Alpine/musl).\nSource: https://github.com/authenticmemory/gami-verify\n`,
+    `GAMI Verify ${pkg.version}\n\nNo Node.js or npm installation required.\nExtract the entire archive. Open a terminal in this folder.\n${platform === "windows" ? ".\\gami-verify.exe" : "./gami-verify"} --help\n${platform === "windows" ? ".\\gami-verify.exe" : "./gami-verify"} verify document.pdf record.gpr.json --offline --json\n\nOffline verification can return exit 2 (indeterminate) when identity or Bitcoin evidence is missing.\nExit codes: 0 passed, 1 failed, 2 indeterminate, 3 input error, 4 internal error.\n\nmacOS builds are ad-hoc signed for testing only until Developer ID signing and notarization are configured.\nLinux requires glibc (not Alpine/musl).\nSource: https://github.com/authenticmemory/gami-cli-verifier\n`,
 );
 const archive = join(output, `${stem}${platform === "windows" ? ".zip" : ".tar.gz"}`);
 if (platform === "windows") {

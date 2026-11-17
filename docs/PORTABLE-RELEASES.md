@@ -45,7 +45,7 @@ Linux targets glibc systems, not Alpine/musl. macOS artifacts are explicitly
 marked unsigned previews: ad-hoc signing lets them execute locally but is not
 Developer ID signing or notarization. Do not advertise them as signed releases.
 
-Configure these environments in **authenticmemory/gami-verify**, not only
+Configure these environments in **authenticmemory/gami-cli-verifier**, not only
 in gami-hash. Protect both signing environments with tag rules `test-v*` and `v*`.
 Keep `standalone-preview` free of signing secrets.
 
@@ -57,7 +57,7 @@ identity only after adding its GitHub federated credential:
 
 ```text
 Issuer: https://token.actions.githubusercontent.com
-Subject: configure the exact GitHub OIDC subject shown for the renamed `authenticmemory/gami-verify` repository and `windows-signing` environment
+Subject: repo:authenticmemory@290849074/gami-cli-verifier@1347337260:environment:windows-signing
 Audience: api://AzureADTokenExchange
 ```
 
