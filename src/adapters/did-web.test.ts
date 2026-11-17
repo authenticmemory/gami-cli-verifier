@@ -1,13 +1,19 @@
 import { describe, expect, it } from "@jest/globals";
 import { didWebDocumentUrl, resolveDidWebDocument } from "./did-web";
+import type { FetchHop } from "./did-fetch";
 
-async function successfulFetch(_input: string | URL | Request, init?: RequestInit) {
-    expect(init?.redirect).toBe("error");
-    return new Response('{"id":"did:web:example.org"}', {
-        status: 200,
-        headers: { "content-type": "application/json" },
-    });
-}
+const DOCUMENT_URL = "https://example.org/.well-known/did.json";
+const WWW_DOCUMENT_URL = "https://www.example.org/.well-known/did.json";
+
+const directHop: FetchHop = async (url) =>
+    url === DOCUMENT_URL ? { status: 200, text: '{"id":"did:web:example.org"}' } : { status: 404 };
+
+const wwwRedirectHop: FetchHop = async (url) =>
+    url === DOCUMENT_URL
+        ? { status: 301, location: WWW_DOCUMENT_URL }
+        : url === WWW_DOCUMENT_URL
+          ? { status: 200, text: '{"id":"did:web:example.org"}' }
+          : { status: 404 };
 
 describe("did:web resolution", () => {
     it("maps domain and path identifiers to HTTPS DID documents", () => {
@@ -24,12 +30,25 @@ describe("did:web resolution", () => {
         expect(() => didWebDocumentUrl("did:web:localhost#key-1")).toThrow();
     });
 
-    it("fetches a JSON document without following redirects", async () => {
+    it("fetches a JSON document served directly", async () => {
         await expect(
-            resolveDidWebDocument("did:web:example.org#key-1", successfulFetch as typeof fetch),
-        ).resolves.toMatchObject({
+            resolveDidWebDocument("did:web:example.org#key-1", { hop: directHop }),
+        ).resolves.toEqual({
             document: { id: "did:web:example.org" },
-            url: "https://example.org/.well-known/did.json",
+            url: DOCUMENT_URL,
+            servedFrom: DOCUMENT_URL,
         });
+    });
+
+    it("refuses a redirect unless the caller opts in", async () => {
+        await expect(
+            resolveDidWebDocument("did:web:example.org#key-1", { hop: wwwRedirectHop }),
+        ).rejects.toThrow(/--follow-redirects/);
+        await expect(
+            resolveDidWebDocument("did:web:example.org#key-1", {
+                hop: wwwRedirectHop,
+                followRedirects: true,
+            }),
+        ).resolves.toMatchObject({ url: DOCUMENT_URL, servedFrom: WWW_DOCUMENT_URL });
     });
 });

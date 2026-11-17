@@ -1,5 +1,6 @@
 import { isIP } from "node:net";
 import { parseDidKeyId } from "../domain/did";
+import { fetchDidFile, type FetchHop } from "./did-fetch";
 
 const MAX_DID_DOCUMENT_BYTES = 1024 * 1024;
 const DID_TIMEOUT_MS = 15_000;
@@ -7,6 +8,13 @@ const DID_TIMEOUT_MS = 15_000;
 export interface ResolvedDidDocument {
     document: unknown;
     url: string;
+    /** Where the document was served; differs from `url` only after a followed redirect. */
+    servedFrom: string;
+}
+
+export interface DidResolveOptions {
+    followRedirects?: boolean;
+    hop?: FetchHop;
 }
 
 export function didWebDocumentUrl(keyId: string): string {
@@ -29,23 +37,21 @@ export function didWebDocumentUrl(keyId: string): string {
 
 export async function resolveDidWebDocument(
     keyId: string,
-    fetcher: typeof fetch = fetch,
+    options: DidResolveOptions = {},
 ): Promise<ResolvedDidDocument> {
     const url = didWebDocumentUrl(keyId);
-    const response = await fetcher(url, {
-        headers: { accept: "application/json" },
-        redirect: "error",
-        signal: AbortSignal.timeout(DID_TIMEOUT_MS),
-    });
-    if (!response.ok) throw new Error(`DID server returned HTTP ${response.status}`);
-    const declaredLength = Number(response.headers.get("content-length"));
-    if (Number.isFinite(declaredLength) && declaredLength > MAX_DID_DOCUMENT_BYTES)
-        throw new Error("DID document exceeds the size limit");
-    const text = await response.text();
-    if (Buffer.byteLength(text) > MAX_DID_DOCUMENT_BYTES)
-        throw new Error("DID document exceeds the size limit");
+    const fetched = await fetchDidFile(
+        url,
+        {
+            accept: "application/json",
+            timeoutMs: DID_TIMEOUT_MS,
+            maxBytes: MAX_DID_DOCUMENT_BYTES,
+            followRedirects: options.followRedirects ?? false,
+        },
+        options.hop,
+    );
     try {
-        return { document: JSON.parse(text) as unknown, url };
+        return { document: JSON.parse(fetched.text) as unknown, url, servedFrom: fetched.url };
     } catch {
         throw new Error("DID server did not return valid JSON");
     }
