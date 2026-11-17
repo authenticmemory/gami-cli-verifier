@@ -32,10 +32,10 @@ policy changes require ordinary code review and a minor-version release.
 5. Verify the public result from a clean directory.
 
 ```sh
-npm view @authenticmemory/gami@0.2.0 dist.integrity
-npm install --global @authenticmemory/gami@0.2.0
+npm view @authenticmemory/gami-verify@0.2.0 dist.integrity
+npm install --global @authenticmemory/gami-verify@0.2.0
 gami-verify version --json
-gh attestation verify gami-0.2.0.tgz --repo authenticmemory/gami-cli-verifier
+gh attestation verify authenticmemory-gami-verify-0.2.0.tgz --repo authenticmemory/gami-verify
 sha256sum --check SHA256SUMS
 ```
 
